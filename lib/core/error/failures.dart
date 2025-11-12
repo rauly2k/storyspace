@@ -4,7 +4,7 @@ part 'failures.freezed.dart';
 
 /// Base failure class for error handling using freezed
 @freezed
-class Failure with _$Failure {
+abstract class Failure with _$Failure {
   const Failure._();
 
   /// Network-related failure (no internet, timeout, etc.)
