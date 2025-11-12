@@ -7,6 +7,11 @@ import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/kid_profile/presentation/screens/kid_profiles_screen.dart';
+import '../../features/story/presentation/screens/story_library_screen.dart';
+import '../../features/story/presentation/screens/story_viewer_screen.dart';
+import '../../features/story/presentation/screens/generate_story_screen.dart';
+import '../../features/kid_profile/domain/entities/kid_profile_entity.dart';
+import '../../features/story/domain/entities/story_entity.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
 
 part 'app_router.g.dart';
@@ -18,7 +23,9 @@ class AppRoutes {
   static const String login = '/login';
   static const String register = '/register';
   static const String home = '/home';
-  // TODO: Add more routes for other features
+  static const String storyLibrary = '/story-library';
+  static const String storyViewer = '/story-viewer';
+  static const String generateStory = '/generate-story';
 }
 
 /// GoRouter provider with auth redirect logic
@@ -74,6 +81,32 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: AppRoutes.home,
         builder: (context, state) => const KidProfilesScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.storyLibrary,
+        builder: (context, state) {
+          final kidProfile = state.extra as KidProfileEntity;
+          return StoryLibraryScreen(kidProfile: kidProfile);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.storyViewer,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          final story = extra['story'] as StoryEntity;
+          final kidProfile = extra['kidProfile'] as KidProfileEntity;
+          return StoryViewerScreen(
+            story: story,
+            kidProfile: kidProfile,
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.generateStory,
+        builder: (context, state) {
+          final kidProfile = state.extra as KidProfileEntity;
+          return GenerateStoryScreen(kidProfile: kidProfile);
+        },
       ),
     ],
   );
