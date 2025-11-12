@@ -10,6 +10,9 @@ dart run build_runner build --delete-conflicting-outputs
 
 This will generate:
 - `lib/core/error/failures.freezed.dart`
+- `lib/core/database/app_database.g.dart` (Drift database - Phase 9)
+- `lib/features/offline/domain/entities/*.freezed.dart` (Offline entities - Phase 9)
+- `lib/features/offline/presentation/providers/offline_providers.g.dart` (Riverpod - Phase 9)
 - Any other `.g.dart`, `.freezed.dart`, or `.gr.dart` files
 
 **Note:** These generated files are gitignored, so you'll need to run this command after every pull.
@@ -41,9 +44,20 @@ If you haven't configured Firebase yet, see the Phase 1.2 instructions in the ma
 
 ## Project Structure
 
-- `lib/core/` - Core infrastructure (theme, constants, errors, utils)
-- `lib/features/` - Feature modules (auth, profiles, stories, etc.)
+- `lib/core/` - Core infrastructure (theme, constants, errors, utils, database)
+- `lib/features/` - Feature modules (auth, profiles, stories, offline, etc.)
 - `assets/` - Images, icons, stories, fonts
+
+## Phase 9: Offline Support
+
+Phase 9 adds offline story downloads using Drift (SQLite). Key features:
+- Download stories for offline reading
+- Local image caching
+- Subscription-based download limits (Free: 0, Premium: 10, Premium+: unlimited)
+- Progress tracking and storage management
+- Data synchronization with cloud
+
+**See `PHASE_9_OFFLINE_SUPPORT.md` for complete documentation.**
 
 ## Common Issues
 

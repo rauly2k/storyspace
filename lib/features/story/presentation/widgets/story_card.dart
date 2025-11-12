@@ -1,27 +1,36 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/constants/app_constants.dart';
 import '../../../kid_profile/domain/entities/kid_profile_entity.dart';
 import '../../domain/entities/story_entity.dart';
+import '../../../offline/presentation/widgets/download_button.dart';
 
 /// Card widget displaying a story in the library.
-class StoryCard extends StatelessWidget {
+class StoryCard extends ConsumerWidget {
   final StoryEntity story;
-  final KidProfileEntity kidProfile;
+  final KidProfileEntity? kidProfile;
   final VoidCallback onTap;
   final VoidCallback? onDelete;
+  final bool showDownloadButton;
+  final bool showOfflineBadge;
 
   const StoryCard({
     super.key,
     required this.story,
-    required this.kidProfile,
+    this.kidProfile,
     required this.onTap,
     this.onDelete,
+    this.showDownloadButton = true,
+    this.showOfflineBadge = false,
   });
 
   @override
-  Widget build(BuildContext context) {
-    final ageBucketColor = AppColors.getAgeBucketColor(kidProfile.ageBucket);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ageBucketColor = kidProfile != null
+        ? AppColors.getAgeBucketColor(kidProfile!.ageBucket)
+        : AppColors.primary;
 
     return Card(
       elevation: 2,
@@ -31,8 +40,71 @@ class StoryCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Cover image or placeholder
-            _buildCoverImage(ageBucketColor),
+            // Cover image or placeholder with badges
+            Stack(
+              children: [
+                _buildCoverImage(ageBucketColor),
+
+                // Offline badge (top-left)
+                if (showOfflineBadge)
+                  Positioned(
+                    top: 8,
+                    left: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.success,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.download_done,
+                            size: 12,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Offline',
+                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                // Download button (top-right)
+                if (showDownloadButton)
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: DownloadButton(
+                        storyId: story.id,
+                        mini: true,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
 
             // Story info
             Padding(
