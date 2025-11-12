@@ -22,7 +22,7 @@ class AppRoutes {
 
 /// GoRouter provider with auth redirect logic
 @riverpod
-GoRouter appRouter(AppRouterRef ref) {
+GoRouter appRouter(Ref ref) {
   final authState = ref.watch(authStateChangesProvider);
 
   return GoRouter(
