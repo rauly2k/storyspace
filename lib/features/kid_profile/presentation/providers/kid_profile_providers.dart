@@ -62,14 +62,10 @@ Future<KidProfileEntity?> kidProfile(Ref ref, String profileId) async {
 /// Provider for the current/selected kid profile
 /// Returns the first profile from the list for now
 @riverpod
-Stream<KidProfileEntity?> currentKidProfile(Ref ref) async* {
-  await for (final profiles in ref.watch(kidProfilesProvider)) {
-    if (profiles.isEmpty) {
-      yield null;
-    } else {
-      yield profiles.first;
-    }
-  }
+Stream<KidProfileEntity?> currentKidProfile(Ref ref) {
+  return ref.watch(kidProfilesProvider.stream).map((profiles) {
+    return profiles.isEmpty ? null : profiles.first;
+  });
 }
 
 // ==================== KID PROFILE CONTROLLER ====================
