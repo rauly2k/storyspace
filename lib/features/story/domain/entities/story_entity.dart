@@ -16,6 +16,8 @@ abstract class StoryEntity with _$StoryEntity {
     required String content,
     required String genre,
     String? coverImageUrl,
+    @Default([]) List<String> sceneImageUrls,
+    String? artStyle,
     @Default(false) bool isAIGenerated,
     String? aiPrompt,
     @Default(0) int readCount,

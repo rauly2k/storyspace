@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../kid_profile/domain/entities/kid_profile_entity.dart';
+import '../../../image_generation/domain/entities/art_style.dart';
+import '../../../image_generation/presentation/widgets/art_style_selector.dart';
 import '../providers/story_providers.dart';
 
 /// Screen for generating AI stories using Gemini.
@@ -24,6 +26,8 @@ class _GenerateStoryScreenState extends ConsumerState<GenerateStoryScreen> {
   final _customPromptController = TextEditingController();
 
   String _selectedGenre = 'Adventure';
+  ArtStyle _selectedArtStyle = ArtStyle.cartoon;
+  bool _generateImages = true;
   bool _isGenerating = false;
 
   static const List<String> _genres = [
@@ -58,6 +62,8 @@ class _GenerateStoryScreenState extends ConsumerState<GenerateStoryScreen> {
       customPrompt: _customPromptController.text.trim().isEmpty
           ? null
           : _customPromptController.text.trim(),
+      artStyle: _selectedArtStyle.label,
+      generateImages: _generateImages,
     );
 
     if (mounted) {
@@ -126,7 +132,9 @@ class _GenerateStoryScreenState extends ConsumerState<GenerateStoryScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'This may take 10-30 seconds',
+              _generateImages
+                  ? 'Generating story and images...\nThis may take 30-60 seconds'
+                  : 'This may take 10-30 seconds',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey,
                   ),
@@ -235,6 +243,67 @@ class _GenerateStoryScreenState extends ConsumerState<GenerateStoryScreen> {
 
             const SizedBox(height: 32),
 
+            // Art Style Selection
+            ArtStyleSelector(
+              selectedStyle: _selectedArtStyle,
+              onStyleSelected: (style) {
+                setState(() => _selectedArtStyle = style);
+              },
+              isPremium: true, // TODO: Check actual subscription status
+            ),
+
+            const SizedBox(height: 32),
+
+            // Generate Images Toggle
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: ageBucketColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: ageBucketColor.withOpacity(0.3),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.image,
+                    color: ageBucketColor,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Generate Images',
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Create cover and scene images for your story',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Colors.grey[600],
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Switch(
+                    value: _generateImages,
+                    onChanged: (value) {
+                      setState(() => _generateImages = value);
+                    },
+                    activeColor: ageBucketColor,
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
             // Interests display
             if (widget.kidProfile.interests.isNotEmpty) ...[
               Text(
@@ -331,9 +400,9 @@ class _GenerateStoryScreenState extends ConsumerState<GenerateStoryScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Story generation typically takes 10-30 seconds. The AI will create '
-                      'a personalized story based on ${widget.kidProfile.name}\'s age, '
-                      'interests, and your custom request.',
+                      'Story generation typically takes ${_generateImages ? '30-60' : '10-30'} seconds. '
+                      'The AI will create a personalized story${_generateImages ? ' with beautiful illustrations' : ''} '
+                      'based on ${widget.kidProfile.name}\'s age, interests, and your custom request.',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Colors.blue[900],
                           ),
