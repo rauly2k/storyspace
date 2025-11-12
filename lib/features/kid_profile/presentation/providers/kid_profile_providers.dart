@@ -63,7 +63,7 @@ Future<KidProfileEntity?> kidProfile(Ref ref, String profileId) async {
 /// Returns the first profile from the list for now
 @riverpod
 Stream<KidProfileEntity?> currentKidProfile(Ref ref) async* {
-  await for (final profiles in ref.watch(kidProfilesProvider.stream)) {
+  await for (final profiles in ref.watch(kidProfilesProvider)) {
     if (profiles.isEmpty) {
       yield null;
     } else {
