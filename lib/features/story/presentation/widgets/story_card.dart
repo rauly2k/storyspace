@@ -1,8 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/widgets/widgets.dart';
 import '../../../kid_profile/domain/entities/kid_profile_entity.dart';
 import '../../domain/entities/story_entity.dart';
 import '../../../offline/presentation/widgets/download_button.dart';
@@ -32,12 +32,22 @@ class StoryCard extends ConsumerWidget {
         ? AppColors.getAgeBucketColor(kidProfile!.ageBucket)
         : AppColors.primary;
 
-    return Card(
-      elevation: 2,
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
+    final semanticLabel = AccessibilityUtils.storyCardLabel(
+      title: story.title,
+      author: story.author,
+      pageCount: story.pageCount,
+      isFavorite: story.isFavorite,
+    );
+
+    return Semantics(
+      label: semanticLabel,
+      button: true,
+      child: Card(
+        elevation: 2,
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Cover image or placeholder with badges
@@ -91,7 +101,7 @@ class StoryCard extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
+                            color: Colors.black.withValues(alpha: 0.2),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -132,7 +142,7 @@ class StoryCard extends ConsumerWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.aiStory.withOpacity(0.2),
+                            color: AppColors.aiStory.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(color: AppColors.aiStory),
                           ),
@@ -200,11 +210,11 @@ class StoryCard extends ConsumerWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        IconButton(
+                        AccessibleIconButton(
+                          icon: Icons.delete_outline,
+                          label: 'Delete ${story.title}',
                           onPressed: onDelete,
-                          icon: const Icon(Icons.delete_outline),
                           color: AppColors.error,
-                          tooltip: 'Delete story',
                         ),
                       ],
                     ),
@@ -215,22 +225,16 @@ class StoryCard extends ConsumerWidget {
           ],
         ),
       ),
+    ),
     );
   }
 
   Widget _buildCoverImage(Color ageBucketColor) {
     if (story.coverImageUrl != null && story.coverImageUrl!.isNotEmpty) {
-      return AspectRatio(
+      return StoryCoverImage(
+        imageUrl: story.coverImageUrl!,
         aspectRatio: 16 / 9,
-        child: CachedNetworkImage(
-          imageUrl: story.coverImageUrl!,
-          fit: BoxFit.cover,
-          placeholder: (context, url) => Container(
-            color: ageBucketColor.withOpacity(0.2),
-            child: const Center(child: CircularProgressIndicator()),
-          ),
-          errorWidget: (context, url, error) => _buildPlaceholder(ageBucketColor),
-        ),
+        semanticLabel: 'Cover image for ${story.title}',
       );
     }
 
@@ -246,16 +250,18 @@ class StoryCard extends ConsumerWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              ageBucketColor.withOpacity(0.3),
-              ageBucketColor.withOpacity(0.1),
+              ageBucketColor.withValues(alpha: 0.3),
+              ageBucketColor.withValues(alpha: 0.1),
             ],
           ),
         ),
         child: Center(
-          child: Icon(
-            Icons.auto_stories,
-            size: 64,
-            color: ageBucketColor,
+          child: ExcludeSemantics(
+            child: Icon(
+              Icons.auto_stories,
+              size: 64,
+              color: ageBucketColor,
+            ),
           ),
         ),
       ),

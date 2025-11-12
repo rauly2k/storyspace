@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/widgets.dart';
 import '../../domain/entities/kid_profile_entity.dart';
 
 /// Kid profile card widget with age bucket colors
@@ -18,20 +18,28 @@ class KidProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ageBucketColor = AppColors.getAgeBucketColor(profile.ageBucket);
+    final semanticLabel = AccessibilityUtils.kidProfileLabel(
+      name: profile.name,
+      age: profile.age,
+      interests: profile.interests.join(', '),
+    );
 
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-          color: ageBucketColor.withOpacity(0.3),
-          width: 2,
+    return Semantics(
+      label: semanticLabel,
+      button: true,
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: ageBucketColor.withValues(alpha: 0.3),
+            width: 2,
+          ),
         ),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
+        child: InkWell(
+          onTap: onTap,
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Photo section with gradient overlay
@@ -49,7 +57,7 @@ class KidProfileCard extends StatelessWidget {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          ageBucketColor.withOpacity(0.7),
+                          ageBucketColor.withValues(alpha: 0.7),
                         ],
                       ),
                     ),
@@ -85,7 +93,7 @@ class KidProfileCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: ageBucketColor.withOpacity(0.05),
+                  color: ageBucketColor.withValues(alpha: 0.05),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,16 +133,16 @@ class KidProfileCard extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 
   Widget _buildPhoto() {
     if (profile.photoUrl != null && profile.photoUrl!.isNotEmpty) {
-      return CachedNetworkImage(
+      return OptimizedImage(
         imageUrl: profile.photoUrl!,
         fit: BoxFit.cover,
-        placeholder: (context, url) => _buildPlaceholder(),
-        errorWidget: (context, url, error) => _buildPlaceholder(),
+        semanticLabel: '${profile.name}\'s profile picture',
       );
     }
 
@@ -145,13 +153,15 @@ class KidProfileCard extends StatelessWidget {
     final ageBucketColor = AppColors.getAgeBucketColor(profile.ageBucket);
 
     return Container(
-      color: ageBucketColor.withOpacity(0.2),
+      color: ageBucketColor.withValues(alpha: 0.2),
       child: Center(
-        child: Text(
-          profile.initial,
-          style: AppTextStyles.displayLarge.copyWith(
-            color: ageBucketColor,
-            fontWeight: FontWeight.w700,
+        child: ExcludeSemantics(
+          child: Text(
+            profile.initial,
+            style: AppTextStyles.displayLarge.copyWith(
+              color: ageBucketColor,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
       ),
