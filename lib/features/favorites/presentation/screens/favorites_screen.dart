@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/router/app_router.dart';
-import '../../../story/domain/entities/story_entity.dart';
 import '../../../story/presentation/providers/story_providers.dart';
 import '../../../kid_profile/presentation/providers/kid_profile_providers.dart';
 import '../providers/favorites_providers.dart';
@@ -78,7 +77,7 @@ class FavoritesScreen extends ConsumerWidget {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                color: AppColors.accent.withOpacity(0.1),
+                color: AppColors.accent.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(60),
               ),
               child: const Icon(
@@ -120,7 +119,7 @@ class _FavoriteStoryCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final storyAsync = ref.watch(storyByIdProvider(storyId));
+    final storyAsync = ref.watch(storyProvider(storyId));
 
     return storyAsync.when(
       data: (story) {
@@ -161,7 +160,7 @@ class _FavoriteStoryCard extends ConsumerWidget {
                         width: 60,
                         height: 60,
                         decoration: BoxDecoration(
-                          color: _getGenreColor(story.genre).withOpacity(0.1),
+                          color: _getGenreColor(story.genre).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Icon(
@@ -214,7 +213,7 @@ class _FavoriteStoryCard extends ConsumerWidget {
                       Chip(
                         label: Text(story.genre),
                         labelStyle: AppTextStyles.labelSmall,
-                        backgroundColor: _getGenreColor(story.genre).withOpacity(0.1),
+                        backgroundColor: _getGenreColor(story.genre).withValues(alpha: 0.1),
                         side: BorderSide.none,
                         padding: EdgeInsets.zero,
                         visualDensity: VisualDensity.compact,

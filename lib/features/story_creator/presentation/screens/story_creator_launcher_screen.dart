@@ -39,8 +39,8 @@ class StoryCreatorLauncherScreen extends ConsumerWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        AppColors.primary.withOpacity(0.1),
-                        AppColors.secondary.withOpacity(0.1),
+                        AppColors.primary.withValues(alpha: 0.1),
+                        AppColors.secondary.withValues(alpha: 0.1),
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -49,7 +49,7 @@ class StoryCreatorLauncherScreen extends ConsumerWidget {
                   ),
                   child: Column(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.auto_awesome,
                         size: 64,
                         color: AppColors.primary,
@@ -149,7 +149,7 @@ class StoryCreatorLauncherScreen extends ConsumerWidget {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(60),
               ),
               child: const Icon(

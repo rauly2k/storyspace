@@ -106,7 +106,7 @@ class ProfileScreen extends ConsumerWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -202,7 +202,7 @@ class ProfileScreen extends ConsumerWidget {
     // Get total stories count across all profiles
     int totalStories = 0;
     for (final profile in profiles) {
-      final storiesAsync = ref.watch(storiesByProfileProvider(profile.id));
+      final storiesAsync = ref.watch(storiesForKidProvider(profile.id));
       storiesAsync.whenData((stories) {
         totalStories += stories.length;
       });
@@ -262,7 +262,7 @@ class ProfileScreen extends ConsumerWidget {
           width: 56,
           height: 56,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(icon, color: color, size: 28),
@@ -330,7 +330,7 @@ class ProfileScreen extends ConsumerWidget {
                       children: [
                         CircleAvatar(
                           backgroundColor: AppColors.getAgeBucketColor(profile.age)
-                              .withOpacity(0.2),
+                              .withValues(alpha: 0.2),
                           child: Text(
                             profile.name[0].toUpperCase(),
                             style: AppTextStyles.titleSmall.copyWith(

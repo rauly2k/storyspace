@@ -40,7 +40,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           });
         },
         backgroundColor: Colors.white,
-        indicatorColor: AppColors.primary.withOpacity(0.2),
+        indicatorColor: AppColors.primary.withValues(alpha: 0.2),
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         destinations: const [
           NavigationDestination(

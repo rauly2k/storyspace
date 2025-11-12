@@ -1,12 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
-import '../../features/kid_profile/presentation/screens/kid_profiles_screen.dart';
+import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/story/presentation/screens/story_library_screen.dart';
 import '../../features/story/presentation/screens/story_viewer_screen.dart';
 import '../../features/story/presentation/screens/generate_story_screen.dart';
@@ -82,7 +80,7 @@ GoRouter appRouter(Ref ref) {
       ),
       GoRoute(
         path: AppRoutes.home,
-        builder: (context, state) => const KidProfilesScreen(),
+        builder: (context, state) => const HomeScreen(),
       ),
       GoRoute(
         path: AppRoutes.storyLibrary,
