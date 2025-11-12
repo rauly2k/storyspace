@@ -6,6 +6,7 @@ import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
+import '../../features/kid_profile/presentation/screens/kid_profiles_screen.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
 
 part 'app_router.g.dart';
@@ -72,27 +73,7 @@ GoRouter appRouter(AppRouterRef ref) {
       ),
       GoRoute(
         path: AppRoutes.home,
-        builder: (context, state) {
-          // TODO: Replace with actual home screen
-          return Scaffold(
-            appBar: AppBar(title: const Text('Home')),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Welcome to StorySpace!'),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      ref.read(authControllerProvider.notifier).signOut();
-                    },
-                    child: const Text('Sign Out'),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
+        builder: (context, state) => const KidProfilesScreen(),
       ),
     ],
   );
