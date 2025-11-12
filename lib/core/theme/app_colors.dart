@@ -45,6 +45,9 @@ class AppColors {
   static const Color genreSchool = Color(0xFF26A69A); // Teal
   static const Color genreSpooky = Color(0xFF5D4037); // Brown
 
+  // AI Story indicator color
+  static const Color aiStory = Color(0xFF9C27B0); // Purple for AI-generated stories
+
   // Overlay Colors
   static const Color overlay = Color(0x80000000); // Black 50%
   static const Color overlayLight = Color(0x40000000); // Black 25%

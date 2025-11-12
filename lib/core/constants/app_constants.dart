@@ -221,6 +221,9 @@ class AppConstants {
     }
   }
 
+  /// Alias for getAIStoriesLimit (singular form)
+  static int getAIStoryLimit(String tier) => getAIStoriesLimit(tier);
+
   /// Get kid profile limit for tier
   static int getKidProfileLimit(String tier) {
     switch (tier.toLowerCase()) {
