@@ -5,6 +5,7 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/providers/reading_preferences_provider.dart';
 import '../../../kid_profile/domain/entities/kid_profile_entity.dart';
 import '../../../favorites/presentation/providers/favorites_providers.dart';
+import '../../../audio_narration/presentation/widgets/audio_controls.dart';
 import '../../domain/entities/story_entity.dart';
 import '../providers/story_providers.dart';
 import '../widgets/reading_controls.dart';
@@ -293,6 +294,12 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen> {
           ],
         ),
             ),
+          ),
+
+          // Audio controls
+          AudioControls(
+            storyContent: widget.story.content,
+            accentColor: ageBucketColor,
           ),
         ],
       ),
