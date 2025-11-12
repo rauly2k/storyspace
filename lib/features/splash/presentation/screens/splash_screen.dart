@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../onboarding/presentation/screens/onboarding_screen.dart';
+import '../../../../core/router/app_router.dart';
 
 /// Splash screen with logo and fade-in animation
 /// Shows briefly before navigating to onboarding or home based on auth state
@@ -53,13 +54,8 @@ class _SplashScreenState extends State<SplashScreen>
 
     if (!mounted) return;
 
-    // TODO: Check auth state and navigate accordingly
-    // For now, always navigate to onboarding
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => const OnboardingScreen(),
-      ),
-    );
+    // Navigate to onboarding (router will handle auth redirects)
+    context.go(AppRoutes.onboarding);
   }
 
   @override

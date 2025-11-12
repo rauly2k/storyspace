@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/router/app_router.dart';
 import '../widgets/page_indicator.dart';
 import '../widgets/onboarding_slide.dart';
 
@@ -45,13 +47,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _completeOnboarding() {
-    // TODO: Mark onboarding as completed and navigate to register/login
-    // For now, just show a message
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Welcome to StorySpace! (Auth screens coming next)'),
-      ),
-    );
+    // TODO: Mark onboarding as completed (e.g., save to SharedPreferences)
+    // Navigate to login screen
+    context.go(AppRoutes.login);
   }
 
   @override
