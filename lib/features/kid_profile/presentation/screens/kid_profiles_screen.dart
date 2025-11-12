@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../providers/kid_profile_providers.dart';
 import '../widgets/kid_profile_card.dart';
@@ -239,13 +240,8 @@ class KidProfilesScreen extends ConsumerWidget {
   }
 
   void _onProfileTap(BuildContext context, dynamic profile) {
-    // TODO: Navigate to home screen with selected profile
-    // For now, show a message
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Selected ${profile.name}\'s profile'),
-      ),
-    );
+    // Navigate to story library for the selected profile
+    context.push(AppRoutes.storyLibrary, extra: profile);
   }
 
   bool _canCreateProfile({

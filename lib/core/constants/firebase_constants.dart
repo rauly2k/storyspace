@@ -43,6 +43,19 @@ class FirebaseConstants {
   // ==================== STORY FIELDS ====================
 
   static const String storyId = 'id';
+  static const String storyKidProfileIdField = 'kidProfileId';
+  static const String storyUserIdField = 'userId';
+  static const String storyTitleField = 'title';
+  static const String storyContentField = 'content';
+  static const String storyGenreField = 'genre';
+  static const String storyCoverImageUrlField = 'coverImageUrl';
+  static const String storyIsAIGeneratedField = 'isAIGenerated';
+  static const String storyAIPromptField = 'aiPrompt';
+  static const String storyReadCountField = 'readCount';
+  static const String storyCreatedAtField = 'createdAt';
+  static const String storyLastReadAtField = 'lastReadAt';
+
+  // Legacy fields (for backwards compatibility)
   static const String storyTitle = 'title';
   static const String storyContent = 'content';
   static const String storyCategory = 'category';
