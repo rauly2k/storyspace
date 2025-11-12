@@ -196,10 +196,7 @@ class StoryLibraryScreen extends ConsumerWidget {
                   }
 
                   Navigator.of(context).pop();
-                  context.push(
-                    AppRoutes.generateStory,
-                    extra: kidProfile,
-                  );
+                  context.push(AppRoutes.storyWizard);
                 });
               },
             ),
