@@ -13,7 +13,7 @@ part 'auth_providers.g.dart';
 
 /// Provider for AuthRemoteDataSource
 @riverpod
-AuthRemoteDataSource authRemoteDataSource(AuthRemoteDataSourceRef ref) {
+AuthRemoteDataSource authRemoteDataSource(Ref ref) {
   return AuthRemoteDataSource(
     firebaseAuth: FirebaseAuth.instance,
     firestore: FirebaseFirestore.instance,
@@ -25,7 +25,7 @@ AuthRemoteDataSource authRemoteDataSource(AuthRemoteDataSourceRef ref) {
 
 /// Provider for AuthRepository
 @riverpod
-AuthRepository authRepository(AuthRepositoryRef ref) {
+AuthRepository authRepository(Ref ref) {
   final remoteDataSource = ref.watch(authRemoteDataSourceProvider);
   return AuthRepositoryImpl(remoteDataSource: remoteDataSource);
 }
@@ -35,14 +35,14 @@ AuthRepository authRepository(AuthRepositoryRef ref) {
 /// Stream provider for auth state changes
 /// Returns null when logged out, UserEntity when logged in
 @riverpod
-Stream<UserEntity?> authStateChanges(AuthStateChangesRef ref) {
+Stream<UserEntity?> authStateChanges(Ref ref) {
   final repository = ref.watch(authRepositoryProvider);
   return repository.authStateChanges;
 }
 
 /// Provider for current user (sync)
 @riverpod
-Future<UserEntity?> currentUser(CurrentUserRef ref) async {
+Future<UserEntity?> currentUser(Ref ref) async {
   final repository = ref.watch(authRepositoryProvider);
   final result = await repository.getCurrentUser();
   return result.fold(
@@ -95,6 +95,9 @@ class AuthController extends _$AuthController {
       password: password,
     );
 
+    // Check if the provider is still mounted before updating state
+    if (!ref.mounted) return false;
+
     return result.fold(
       (failure) {
         state = state.copyWith(
@@ -125,6 +128,9 @@ class AuthController extends _$AuthController {
       displayName: displayName,
     );
 
+    // Check if the provider is still mounted before updating state
+    if (!ref.mounted) return false;
+
     return result.fold(
       (failure) {
         state = state.copyWith(
@@ -146,6 +152,9 @@ class AuthController extends _$AuthController {
 
     final repository = ref.read(authRepositoryProvider);
     final result = await repository.signInWithGoogle();
+
+    // Check if the provider is still mounted before updating state
+    if (!ref.mounted) return false;
 
     return result.fold(
       (failure) {
@@ -169,6 +178,9 @@ class AuthController extends _$AuthController {
     final repository = ref.read(authRepositoryProvider);
     final result = await repository.signOut();
 
+    // Check if the provider is still mounted before updating state
+    if (!ref.mounted) return false;
+
     return result.fold(
       (failure) {
         state = state.copyWith(
@@ -190,6 +202,9 @@ class AuthController extends _$AuthController {
 
     final repository = ref.read(authRepositoryProvider);
     final result = await repository.sendPasswordResetEmail(email: email);
+
+    // Check if the provider is still mounted before updating state
+    if (!ref.mounted) return false;
 
     return result.fold(
       (failure) {

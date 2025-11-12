@@ -58,8 +58,8 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen> {
   @override
   Widget build(BuildContext context) {
     final ageBucketColor = AppColors.getAgeBucketColor(widget.kidProfile.ageBucket);
-    final preferences = ref.watch(readingPreferencesNotifierProvider);
-    final preferencesNotifier = ref.read(readingPreferencesNotifierProvider.notifier);
+    final preferences = ref.watch(readingPreferencesProvider);
+    final preferencesNotifier = ref.read(readingPreferencesProvider.notifier);
     final backgroundColor = preferencesNotifier.getBackgroundColor();
     final textColor = preferencesNotifier.getTextColor();
 
@@ -173,7 +173,7 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen> {
             Text(
               widget.story.title,
               style: AppTextStyles.getStoryTextStyle(widget.kidProfile.ageBucket).copyWith(
-                fontSize: 32 * preferences.textScale,
+                fontSize: (32 * preferences.textScale).toDouble(),
                 fontWeight: FontWeight.bold,
                 color: ageBucketColor,
               ),

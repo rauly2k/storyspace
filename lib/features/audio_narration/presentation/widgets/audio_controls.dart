@@ -64,7 +64,7 @@ class _AudioControlsState extends ConsumerState<AudioControls> {
               IconButton(
                 onPressed: ttsState.isPlaying || ttsState.isPaused
                     ? () async {
-                        await ref.read(ttsControllerProvider.notifier).stop();
+                        await ref.read(tTSControllerProvider.notifier).stop();
                       }
                     : null,
                 icon: const Icon(Icons.stop),
@@ -85,7 +85,7 @@ class _AudioControlsState extends ConsumerState<AudioControls> {
                       ? null
                       : () async {
                           final controller =
-                              ref.read(ttsControllerProvider.notifier);
+                              ref.read(tTSControllerProvider.notifier);
                           await controller.togglePlayPause(widget.storyContent);
                         },
                   icon: Icon(
@@ -147,7 +147,7 @@ class _AudioControlsState extends ConsumerState<AudioControls> {
                   },
                   onChangeEnd: (value) async {
                     await ref
-                        .read(ttsControllerProvider.notifier)
+                        .read(tTSControllerProvider.notifier)
                         .setSpeechRate(value);
                   },
                 ),

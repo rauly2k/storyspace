@@ -12,19 +12,19 @@ part 'story_providers.g.dart';
 
 /// Provides the Gemini AI service
 @riverpod
-GeminiService geminiService(GeminiServiceRef ref) {
+GeminiService geminiService(Ref ref) {
   return GeminiService();
 }
 
 /// Provides the story remote data source
 @riverpod
-StoryRemoteDataSource storyRemoteDataSource(StoryRemoteDataSourceRef ref) {
+StoryRemoteDataSource storyRemoteDataSource(Ref ref) {
   return StoryRemoteDataSource();
 }
 
 /// Provides the story repository
 @riverpod
-StoryRepository storyRepository(StoryRepositoryRef ref) {
+StoryRepository storyRepository(Ref ref) {
   return StoryRepositoryImpl(
     remoteDataSource: ref.watch(storyRemoteDataSourceProvider),
     geminiService: ref.watch(geminiServiceProvider),
@@ -36,7 +36,7 @@ StoryRepository storyRepository(StoryRepositoryRef ref) {
 /// Stream of stories for a specific kid profile
 @riverpod
 Stream<List<StoryEntity>> storiesForKid(
-  StoriesForKidRef ref,
+  Ref ref,
   String kidProfileId,
 ) async* {
   final repository = ref.watch(storyRepositoryProvider);
@@ -51,7 +51,7 @@ Stream<List<StoryEntity>> storiesForKid(
 
 /// Get a single story by ID
 @riverpod
-Future<StoryEntity?> story(StoryRef ref, String storyId) async {
+Future<StoryEntity?> story(Ref ref, String storyId) async {
   final repository = ref.watch(storyRepositoryProvider);
 
   final result = await repository.getStoryById(storyId: storyId);
@@ -64,7 +64,7 @@ Future<StoryEntity?> story(StoryRef ref, String storyId) async {
 
 /// Get AI story count for current user (for subscription limits)
 @riverpod
-Future<int> aiStoryCount(AiStoryCountRef ref) async {
+Future<int> aiStoryCount(Ref ref) async {
   final user = await ref.watch(currentUserProvider.future);
   if (user == null) return 0;
 

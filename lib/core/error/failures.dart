@@ -77,6 +77,21 @@ abstract class Failure with _$Failure {
     @Default('An unexpected error occurred.') String message,
   }) = UnknownFailure;
 
+  /// Database failure (generic local database error)
+  const factory Failure.database({
+    @Default('Database error occurred.') String message,
+  }) = DatabaseFailure;
+
+  /// API failure (external API error)
+  const factory Failure.api({
+    @Default('API error occurred.') String message,
+  }) = ApiFailure;
+
+  /// Configuration failure (app configuration error)
+  const factory Failure.configuration({
+    @Default('Configuration error occurred.') String message,
+  }) = ConfigurationFailure;
+
   /// Get user-friendly error message
   String get errorMessage => when(
         network: (msg) => msg,
@@ -93,5 +108,8 @@ abstract class Failure with _$Failure {
         contentSafety: (msg) => msg,
         quotaExceeded: (msg) => msg,
         unknown: (msg) => msg,
+        database: (msg) => msg,
+        api: (msg) => msg,
+        configuration: (msg) => msg,
       );
 }

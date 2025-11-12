@@ -15,8 +15,8 @@ class ReadingControls extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final preferences = ref.watch(readingPreferencesNotifierProvider);
-    final notifier = ref.read(readingPreferencesNotifierProvider.notifier);
+    final preferences = ref.watch(readingPreferencesProvider);
+    final notifier = ref.read(readingPreferencesProvider.notifier);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
