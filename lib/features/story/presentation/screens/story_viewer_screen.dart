@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/providers/reading_preferences_provider.dart';
 import '../../../kid_profile/domain/entities/kid_profile_entity.dart';
+import '../../../favorites/presentation/providers/favorites_providers.dart';
+import '../../../audio_narration/presentation/widgets/audio_controls.dart';
 import '../../domain/entities/story_entity.dart';
 import '../providers/story_providers.dart';
+import '../widgets/reading_controls.dart';
 
 /// Screen for viewing a full story.
 class StoryViewerScreen extends ConsumerStatefulWidget {
@@ -53,12 +57,79 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen> {
   @override
   Widget build(BuildContext context) {
     final ageBucketColor = AppColors.getAgeBucketColor(widget.kidProfile.ageBucket);
+    final preferences = ref.watch(readingPreferencesNotifierProvider);
+    final preferencesNotifier = ref.read(readingPreferencesNotifierProvider.notifier);
+    final backgroundColor = preferencesNotifier.getBackgroundColor();
+    final textColor = preferencesNotifier.getTextColor();
+    final showControls = ref.watch(_showControlsProvider);
 
     return Scaffold(
-      backgroundColor: ageBucketColor.withOpacity(0.05),
+      backgroundColor: backgroundColor,
       appBar: AppBar(
+        backgroundColor: backgroundColor,
+        foregroundColor: textColor,
+        elevation: 0,
         title: Text(widget.story.title),
         actions: [
+          // Toggle reading controls
+          IconButton(
+            icon: Icon(
+              showControls ? Icons.settings : Icons.settings_outlined,
+              color: textColor,
+            ),
+            onPressed: () {
+              ref.read(_showControlsProvider.notifier).state = !showControls;
+            },
+            tooltip: 'Reading Settings',
+          ),
+          // Favorite button
+          Consumer(
+            builder: (context, ref, child) {
+              final isFavoritedAsync = ref.watch(
+                isStoryFavoritedProvider(widget.story.id),
+              );
+
+              return isFavoritedAsync.when(
+                data: (isFavorited) => IconButton(
+                  icon: Icon(
+                    isFavorited ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorited ? Colors.red : textColor,
+                  ),
+                  onPressed: () async {
+                    final controller = ref.read(favoritesControllerProvider.notifier);
+                    final success = await controller.toggleFavorite(
+                      storyId: widget.story.id,
+                    );
+
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            success
+                                ? isFavorited
+                                    ? 'Removed from favorites'
+                                    : 'Added to favorites'
+                                : 'Failed to update favorites',
+                          ),
+                          backgroundColor: success ? AppColors.success : AppColors.error,
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    }
+                  },
+                  tooltip: isFavorited ? 'Remove from Favorites' : 'Add to Favorites',
+                ),
+                loading: () => const IconButton(
+                  icon: Icon(Icons.favorite_border),
+                  onPressed: null,
+                ),
+                error: (_, __) => const IconButton(
+                  icon: Icon(Icons.favorite_border),
+                  onPressed: null,
+                ),
+              );
+            },
+          ),
           // Story metadata badge
           Padding(
             padding: const EdgeInsets.only(right: 16),
@@ -82,7 +153,15 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
+      body: Column(
+        children: [
+          // Reading controls (collapsible)
+          if (showControls)
+            ReadingControls(accentColor: ageBucketColor),
+
+          // Story content
+          Expanded(
+            child: SingleChildScrollView(
         controller: _scrollController,
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -92,7 +171,7 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen> {
             Text(
               widget.story.title,
               style: AppTextStyles.getStoryTextStyle(widget.kidProfile.ageBucket).copyWith(
-                fontSize: 32,
+                fontSize: 32 * preferences.textScale,
                 fontWeight: FontWeight.bold,
                 color: ageBucketColor,
               ),
@@ -138,6 +217,8 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen> {
               style: AppTextStyles.getStoryTextStyle(widget.kidProfile.ageBucket).copyWith(
                 height: 1.8,
                 letterSpacing: 0.3,
+                fontSize: AppTextStyles.getStoryTextStyle(widget.kidProfile.ageBucket).fontSize! * preferences.textScale,
+                color: textColor,
               ),
             ),
 
@@ -212,6 +293,15 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen> {
             ],
           ],
         ),
+            ),
+          ),
+
+          // Audio controls
+          AudioControls(
+            storyContent: widget.story.content,
+            accentColor: ageBucketColor,
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -257,3 +347,6 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen> {
     );
   }
 }
+
+/// Provider to manage reading controls visibility
+final _showControlsProvider = StateProvider<bool>((ref) => false);
