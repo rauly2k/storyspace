@@ -11,14 +11,14 @@ part 'favorites_providers.g.dart';
 /// Provides the favorites remote data source
 @riverpod
 FavoritesRemoteDataSource favoritesRemoteDataSource(
-  FavoritesRemoteDataSourceRef ref,
+  Ref ref,
 ) {
   return FavoritesRemoteDataSource();
 }
 
 /// Provides the favorites repository
 @riverpod
-FavoritesRepository favoritesRepository(FavoritesRepositoryRef ref) {
+FavoritesRepository favoritesRepository(Ref ref) {
   return FavoritesRepositoryImpl(
     remoteDataSource: ref.watch(favoritesRemoteDataSourceProvider),
   );
@@ -28,7 +28,7 @@ FavoritesRepository favoritesRepository(FavoritesRepositoryRef ref) {
 
 /// Stream of favorite story IDs for current user
 @riverpod
-Stream<List<String>> favoriteStoryIds(FavoriteStoryIdsRef ref) async* {
+Stream<List<String>> favoriteStoryIds(Ref ref) async* {
   final user = await ref.watch(currentUserProvider.future);
   if (user == null) {
     yield [];
@@ -48,7 +48,7 @@ Stream<List<String>> favoriteStoryIds(FavoriteStoryIdsRef ref) async* {
 /// Check if a specific story is favorited
 @riverpod
 Future<bool> isStoryFavorited(
-  IsStoryFavoritedRef ref,
+  Ref ref,
   String storyId,
 ) async {
   final user = await ref.watch(currentUserProvider.future);

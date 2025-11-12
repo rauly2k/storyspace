@@ -5,7 +5,7 @@ part 'story_entity.freezed.dart';
 /// Represents a story in the application.
 /// Stories can be AI-generated or manually created.
 @freezed
-class StoryEntity with _$StoryEntity {
+abstract class StoryEntity with _$StoryEntity {
   const StoryEntity._();
 
   const factory StoryEntity({

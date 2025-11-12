@@ -7,7 +7,7 @@ part 'favorite_model.g.dart';
 
 /// Data model for Favorite with JSON and Firestore serialization.
 @freezed
-class FavoriteModel with _$FavoriteModel {
+abstract class FavoriteModel with _$FavoriteModel {
   const FavoriteModel._();
 
   const factory FavoriteModel({

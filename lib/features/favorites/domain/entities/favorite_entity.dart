@@ -4,7 +4,7 @@ part 'favorite_entity.freezed.dart';
 
 /// Represents a favorite story for a user.
 @freezed
-class FavoriteEntity with _$FavoriteEntity {
+abstract class FavoriteEntity with _$FavoriteEntity {
   const factory FavoriteEntity({
     required String id,
     required String userId,

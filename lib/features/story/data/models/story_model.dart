@@ -7,7 +7,7 @@ part 'story_model.g.dart';
 
 /// Data model for Story with JSON and Firestore serialization.
 @freezed
-class StoryModel with _$StoryModel {
+abstract class StoryModel with _$StoryModel {
   const StoryModel._();
 
   const factory StoryModel({

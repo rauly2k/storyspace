@@ -11,7 +11,7 @@ part 'tts_providers.g.dart';
 
 /// Provides the TTS repository
 @riverpod
-TTSRepository ttsRepository(TtsRepositoryRef ref) {
+TTSRepository ttsRepository(Ref ref) {
   final repository = TTSRepositoryImpl();
   // Dispose when provider is disposed
   ref.onDispose(() {
@@ -24,14 +24,14 @@ TTSRepository ttsRepository(TtsRepositoryRef ref) {
 
 /// Stream of TTS state changes
 @riverpod
-Stream<TTSState> ttsState(TtsStateRef ref) {
+Stream<TTSState> ttsState(Ref ref) {
   final repository = ref.watch(ttsRepositoryProvider);
   return repository.stateStream;
 }
 
 /// Check if TTS is available on device
 @riverpod
-Future<bool> ttsAvailable(TtsAvailableRef ref) async {
+Future<bool> ttsAvailable(Ref ref) async {
   final repository = ref.watch(ttsRepositoryProvider);
   final result = await repository.isAvailable();
   return result.fold(
@@ -42,7 +42,7 @@ Future<bool> ttsAvailable(TtsAvailableRef ref) async {
 
 /// Check if audio narration is available for current user's subscription
 @riverpod
-Future<bool> audioNarrationEnabled(AudioNarrationEnabledRef ref) async {
+Future<bool> audioNarrationEnabled(Ref ref) async {
   final user = await ref.watch(currentUserProvider.future);
   if (user == null) return false;
 

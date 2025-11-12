@@ -15,7 +15,7 @@ part 'kid_profile_providers.g.dart';
 /// Provider for KidProfileRemoteDataSource
 @riverpod
 KidProfileRemoteDataSource kidProfileRemoteDataSource(
-    KidProfileRemoteDataSourceRef ref) {
+    Ref ref) {
   return KidProfileRemoteDataSource(
     firestore: FirebaseFirestore.instance,
     storage: FirebaseStorage.instance,
@@ -26,7 +26,7 @@ KidProfileRemoteDataSource kidProfileRemoteDataSource(
 
 /// Provider for KidProfileRepository
 @riverpod
-KidProfileRepository kidProfileRepository(KidProfileRepositoryRef ref) {
+KidProfileRepository kidProfileRepository(Ref ref) {
   final remoteDataSource = ref.watch(kidProfileRemoteDataSourceProvider);
   return KidProfileRepositoryImpl(remoteDataSource: remoteDataSource);
 }
@@ -35,7 +35,7 @@ KidProfileRepository kidProfileRepository(KidProfileRepositoryRef ref) {
 
 /// Stream provider for kid profiles list
 @riverpod
-Stream<List<KidProfileEntity>> kidProfiles(KidProfilesRef ref) async* {
+Stream<List<KidProfileEntity>> kidProfiles(Ref ref) async* {
   final user = await ref.watch(currentUserProvider.future);
 
   if (user == null) {
@@ -49,7 +49,7 @@ Stream<List<KidProfileEntity>> kidProfiles(KidProfilesRef ref) async* {
 
 /// Provider for single kid profile
 @riverpod
-Future<KidProfileEntity?> kidProfile(KidProfileRef ref, String profileId) async {
+Future<KidProfileEntity?> kidProfile(Ref ref, String profileId) async {
   final repository = ref.watch(kidProfileRepositoryProvider);
   final result = await repository.getKidProfile(profileId: profileId);
 
