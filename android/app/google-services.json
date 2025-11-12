@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "395506604925",
+    "project_id": "storyspace-a882d",
+    "storage_bucket": "storyspace-a882d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:395506604925:android:4a63758409116a32920a14",
+        "android_client_info": {
+          "package_name": "com.example.storyspace"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJ6rr59H6oQVXNbkdk3db9yo1O-HfRPsM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
