@@ -43,3 +43,33 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Firebase configuration files (add these manually when needed)
+# Uncomment if you want to keep firebase config private
+# **/google-services.json
+# **/GoogleService-Info.plist
+# lib/firebase_options.dart
+
+# API Keys and Secrets
+.env
+.env.local
+.env.production
+*.key
+*.jks
+key.properties
+secrets.json
+
+# Code generation
+*.g.dart
+*.freezed.dart
+*.gr.dart
+
+# Coverage
+coverage/
+*.lcov
+
+# Drift database
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.db
