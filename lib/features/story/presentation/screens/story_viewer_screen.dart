@@ -28,6 +28,7 @@ class StoryViewerScreen extends ConsumerStatefulWidget {
 class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _hasMarkedAsRead = false;
+  bool _showControls = false;
 
   @override
   void initState() {
@@ -61,7 +62,6 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen> {
     final preferencesNotifier = ref.read(readingPreferencesProvider.notifier);
     final backgroundColor = preferencesNotifier.getBackgroundColor();
     final textColor = preferencesNotifier.getTextColor();
-    final showControls = ref.watch(_showControlsProvider);
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -74,11 +74,13 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen> {
           // Toggle reading controls
           IconButton(
             icon: Icon(
-              showControls ? Icons.settings : Icons.settings_outlined,
+              _showControls ? Icons.settings : Icons.settings_outlined,
               color: textColor,
             ),
             onPressed: () {
-              ref.read(_showControlsProvider.notifier).state = !showControls;
+              setState(() {
+                _showControls = !_showControls;
+              });
             },
             tooltip: 'Reading Settings',
           ),
@@ -156,7 +158,7 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen> {
       body: Column(
         children: [
           // Reading controls (collapsible)
-          if (showControls)
+          if (_showControls)
             ReadingControls(accentColor: ageBucketColor),
 
           // Story content
@@ -347,6 +349,3 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen> {
     );
   }
 }
-
-/// StateProvider to manage reading controls visibility
-final _showControlsProvider = StateProvider<bool>((ref) => false);
