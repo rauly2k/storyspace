@@ -5,6 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/widgets/widgets.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../providers/kid_profile_providers.dart';
 import '../widgets/kid_profile_card.dart';
@@ -21,62 +22,52 @@ class KidProfilesScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kid Profiles'),
+        title: const AccessibleHeader(text: 'Kid Profiles'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
+          AccessibleIconButton(
+            icon: Icons.logout,
+            label: 'Sign Out',
             onPressed: () {
               ref.read(authControllerProvider.notifier).signOut();
+              AccessibilityUtils.announce(context, 'Signed out successfully');
             },
-            tooltip: 'Sign Out',
           ),
         ],
       ),
-      body: user.when(
-        data: (currentUser) {
+      body: AsyncValueHandler(
+        asyncValue: user,
+        loadingBuilder: (context) => _buildLoadingSkeleton(),
+        dataBuilder: (context, currentUser) {
           if (currentUser == null) {
-            return const Center(child: Text('Please log in'));
+            return const EmptyStateDisplay(
+              title: 'Not Logged In',
+              message: 'Please log in to view your kid profiles.',
+              icon: Icons.person_outline,
+            );
           }
 
-          return profilesAsync.when(
-            data: (profiles) {
-              if (profiles.isEmpty) {
-                return _buildEmptyState(context, ref, currentUser.subscriptionTier);
-              }
-
-              return _buildProfilesGrid(
-                context,
-                ref,
-                profiles,
-                currentUser.subscriptionTier,
-              );
-            },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.error_outline, size: 64, color: AppColors.error),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Error loading profiles',
-                    style: AppTextStyles.titleMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    error.toString(),
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
+          return AsyncValueHandler(
+            asyncValue: profilesAsync,
+            loadingBuilder: (context) => _buildLoadingSkeleton(),
+            errorBuilder: (context, error, stack) => AsyncErrorDisplay(
+              error: error,
+              onRetry: () {
+                ref.invalidate(kidProfilesProvider);
+              },
+            ),
+            emptyBuilder: (context) => _buildEmptyState(
+              context,
+              ref,
+              currentUser.subscriptionTier,
+            ),
+            dataBuilder: (context, profiles) => _buildProfilesGrid(
+              context,
+              ref,
+              profiles,
+              currentUser.subscriptionTier,
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Error: $error')),
       ),
       floatingActionButton: user.maybeWhen(
         data: (currentUser) {
@@ -106,49 +97,30 @@ class KidProfilesScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, WidgetRef ref, String tier) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(60),
-              ),
-              child: const Icon(
-                Icons.family_restroom,
-                size: 60,
-                color: AppColors.primary,
-              ),
-            ),
-            const SizedBox(height: 32),
-            Text(
-              'No Kid Profiles Yet!',
-              style: AppTextStyles.headlineMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Create a profile for your child to start your StorySpace adventure!',
-              style: AppTextStyles.bodyLarge.copyWith(
-                color: AppColors.textSecondary,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton.icon(
-              onPressed: () => _navigateToCreateProfile(context),
-              icon: const Icon(Icons.add),
-              label: const Text('Create First Profile'),
-            ),
-          ],
-        ),
+  Widget _buildLoadingSkeleton() {
+    return GridView.builder(
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.85,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
       ),
+      itemCount: 4,
+      itemBuilder: (context, index) => AnimatedGridItem(
+        index: index,
+        child: const ProfileCardSkeleton(),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context, WidgetRef ref, String tier) {
+    return EmptyStateDisplay(
+      title: 'No Kid Profiles Yet!',
+      message: 'Create a profile for your child to start your StorySpace adventure!',
+      icon: Icons.family_restroom,
+      actionLabel: 'Create First Profile',
+      onAction: () => _navigateToCreateProfile(context),
     );
   }
 
@@ -172,9 +144,12 @@ class KidProfilesScreen extends ConsumerWidget {
             delegate: SliverChildBuilderDelegate(
               (context, index) {
                 final profile = profiles[index];
-                return KidProfileCard(
-                  profile: profile,
-                  onTap: () => _onProfileTap(context, profile),
+                return AnimatedGridItem(
+                  index: index,
+                  child: KidProfileCard(
+                    profile: profile,
+                    onTap: () => _onProfileTap(context, profile),
+                  ),
                 );
               },
               childCount: profiles.length,
