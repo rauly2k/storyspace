@@ -40,6 +40,8 @@ abstract class StoryRepository {
     required String genre,
     required List<String> interests,
     String? customPrompt,
+    String? artStyle,
+    bool generateImages = false,
   });
 
   /// Update a story
