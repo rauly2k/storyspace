@@ -14,6 +14,9 @@ import '../../features/home/presentation/screens/settings_screen.dart';
 import '../../features/kid_profile/domain/entities/kid_profile_entity.dart';
 import '../../features/story/domain/entities/story_entity.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
+import '../../features/kid_profile/presentation/screens/kid_profiles_screen.dart';
+import '../../features/kid_profile/presentation/screens/create_kid_profile_screen.dart';
+import '../../features/kid_profile/presentation/providers/kid_profile_providers.dart';
 
 part 'app_router.g.dart';
 
@@ -24,6 +27,8 @@ class AppRoutes {
   static const String login = '/login';
   static const String register = '/register';
   static const String home = '/home';
+  static const String kidProfiles = '/kid-profiles';
+  static const String createKidProfile = '/create-kid-profile';
   static const String storyLibrary = '/story-library';
   static const String storyViewer = '/story-viewer';
   static const String generateStory = '/generate-story';
@@ -36,6 +41,7 @@ class AppRoutes {
 @riverpod
 GoRouter appRouter(Ref ref) {
   final authState = ref.watch(authStateChangesProvider);
+  final kidProfilesAsync = ref.watch(kidProfilesProvider);
 
   return GoRouter(
     initialLocation: AppRoutes.splash,
@@ -47,6 +53,8 @@ GoRouter appRouter(Ref ref) {
           state.matchedLocation == AppRoutes.register;
       final isOnboarding = state.matchedLocation == AppRoutes.onboarding;
       final isSplash = state.matchedLocation == AppRoutes.splash;
+      final isCreatingProfile = state.matchedLocation == AppRoutes.createKidProfile;
+      final isManagingProfiles = state.matchedLocation == AppRoutes.kidProfiles;
 
       // Allow splash and onboarding
       if (isSplash || isOnboarding) {
@@ -58,9 +66,28 @@ GoRouter appRouter(Ref ref) {
         return AppRoutes.login;
       }
 
-      // Redirect to home if already logged in and trying to access auth pages
-      if (isLoggedIn && isLoggingIn) {
-        return AppRoutes.home;
+      // If logged in, check for kid profiles
+      if (isLoggedIn) {
+        // Allow access to auth pages redirect
+        if (isLoggingIn) {
+          return AppRoutes.home;
+        }
+
+        // Allow access to profile creation/management screens
+        if (isCreatingProfile || isManagingProfiles) {
+          return null;
+        }
+
+        // Check if user has kid profiles
+        final hasProfiles = kidProfilesAsync.maybeWhen(
+          data: (profiles) => profiles.isNotEmpty,
+          orElse: () => false,
+        );
+
+        // If no profiles and trying to access home or other screens, redirect to create profile
+        if (!hasProfiles && state.matchedLocation != AppRoutes.createKidProfile) {
+          return AppRoutes.createKidProfile;
+        }
       }
 
       return null;
@@ -81,6 +108,14 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: AppRoutes.register,
         builder: (context, state) => const RegisterScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.kidProfiles,
+        builder: (context, state) => const KidProfilesScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.createKidProfile,
+        builder: (context, state) => const CreateKidProfileScreen(),
       ),
       GoRoute(
         path: AppRoutes.home,

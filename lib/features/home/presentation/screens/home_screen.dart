@@ -214,10 +214,34 @@ class HomeScreen extends ConsumerWidget {
             currentKidProfileAsync.when(
               data: (profile) {
                 if (profile == null) {
-                  return const SizedBox(
+                  return SizedBox(
                     height: 220.0,
                     child: Center(
-                      child: Text('No kid profile found'),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.family_restroom,
+                            size: 48.0,
+                            color: AppColors.textSecondary,
+                          ),
+                          const SizedBox(height: 8.0),
+                          Text(
+                            'No kid profile found',
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                          const SizedBox(height: 12.0),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              context.go(AppRoutes.createKidProfile);
+                            },
+                            icon: const Icon(Icons.add),
+                            label: const Text('Create Profile'),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 }

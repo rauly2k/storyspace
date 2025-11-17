@@ -116,6 +116,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                             color: AppColors.textSecondary,
                           ),
                         ),
+                        const SizedBox(height: 16.0),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            context.go(AppRoutes.createKidProfile);
+                          },
+                          icon: const Icon(Icons.add),
+                          label: const Text('Create Profile'),
+                        ),
                       ],
                     ),
                   );

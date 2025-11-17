@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/validation_utils.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/router/app_router.dart';
 import '../providers/kid_profile_providers.dart';
 
 /// Create kid profile screen with photo upload
@@ -83,7 +85,8 @@ class _CreateKidProfileScreenState
     if (!mounted) return;
 
     if (success) {
-      Navigator.of(context).pop();
+      // Navigate to home screen after creating profile
+      context.go(AppRoutes.home);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Profile created successfully!')),
       );
