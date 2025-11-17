@@ -489,7 +489,7 @@ class ProfileScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              '© 2025 StorySpace. All rights reserved.',
+              '© ${DateTime.now().year} StorySpace. All rights reserved.',
               style: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.textSecondary,
               ),

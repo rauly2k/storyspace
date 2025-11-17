@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 
 /// Settings screen with account management and app preferences
@@ -44,47 +45,6 @@ class SettingsScreen extends ConsumerWidget {
                 subtitle: user.email,
                 onTap: null, // Email is read-only
               ),
-              _SettingsTile(
-                icon: Icons.badge,
-                title: 'Display Name',
-                subtitle: user.displayName ?? 'Not set',
-                onTap: () {
-                  _showEditDisplayNameDialog(context, ref, user.displayName);
-                },
-              ),
-
-              const Divider(height: 32.0),
-
-              // App Preferences Section
-              _SectionHeader(title: 'Preferences'),
-              _SettingsTile(
-                icon: Icons.palette,
-                title: 'Theme',
-                subtitle: 'Light mode',
-                onTap: () {
-                  // TODO: Implement theme selection when ready
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Theme selection coming soon!'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                },
-              ),
-              _SettingsTile(
-                icon: Icons.notifications,
-                title: 'Notifications',
-                subtitle: 'Manage notification preferences',
-                onTap: () {
-                  // TODO: Implement notifications settings when ready
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Notification settings coming soon!'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                },
-              ),
 
               const Divider(height: 32.0),
 
@@ -101,13 +61,7 @@ class SettingsScreen extends ConsumerWidget {
                 title: 'Privacy Policy',
                 subtitle: 'View our privacy policy',
                 onTap: () {
-                  // TODO: Open privacy policy
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Opening privacy policy...'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
+                  _showPrivacyPolicy(context);
                 },
               ),
               _SettingsTile(
@@ -115,13 +69,7 @@ class SettingsScreen extends ConsumerWidget {
                 title: 'Terms of Service',
                 subtitle: 'View terms of service',
                 onTap: () {
-                  // TODO: Open terms of service
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Opening terms of service...'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
+                  _showTermsAndConditions(context);
                 },
               ),
 
@@ -136,15 +84,6 @@ class SettingsScreen extends ConsumerWidget {
                 iconColor: AppColors.warning,
                 onTap: () {
                   _showSignOutDialog(context, authController);
-                },
-              ),
-              _SettingsTile(
-                icon: Icons.delete_forever,
-                title: 'Delete Account',
-                subtitle: 'Permanently delete your account and all data',
-                iconColor: AppColors.error,
-                onTap: () {
-                  _showDeleteAccountDialog(context, ref);
                 },
               ),
 
@@ -176,6 +115,72 @@ class SettingsScreen extends ConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _showTermsAndConditions(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Terms & Conditions', style: AppTextStyles.titleLarge),
+        content: SingleChildScrollView(
+          child: Text(
+            'By using StorySpace, you agree to:\n\n'
+            '1. Use the app for personal, non-commercial purposes\n'
+            '2. Create appropriate content suitable for children\n'
+            '3. Respect intellectual property rights\n'
+            '4. Not misuse or abuse the AI generation service\n'
+            '5. Comply with all applicable laws and regulations\n\n'
+            'StorySpace reserves the right to:\n'
+            '- Modify or terminate the service at any time\n'
+            '- Remove content that violates our policies\n'
+            '- Update these terms with notice to users\n\n'
+            'For full terms, visit: storyspace.app/terms',
+            style: AppTextStyles.bodyMedium,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPrivacyPolicy(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Privacy Policy', style: AppTextStyles.titleLarge),
+        content: SingleChildScrollView(
+          child: Text(
+            'StorySpace Privacy Policy:\n\n'
+            'We collect:\n'
+            '- Account information (email, name)\n'
+            '- Kid profile information (name, age)\n'
+            '- Story generation preferences\n'
+            '- Usage analytics\n\n'
+            'We use this data to:\n'
+            '- Provide and improve our services\n'
+            '- Generate personalized stories\n'
+            '- Communicate with you about updates\n\n'
+            'We do NOT:\n'
+            '- Sell your personal information\n'
+            '- Share data with third parties without consent\n'
+            '- Use children\'s data for advertising\n\n'
+            'For full privacy policy, visit: storyspace.app/privacy',
+            style: AppTextStyles.bodyMedium,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+        ],
       ),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -82,6 +83,72 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       );
       Navigator.of(context).pop();
     }
+  }
+
+  void _showTermsAndConditions() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Terms & Conditions', style: AppTextStyles.titleLarge),
+        content: SingleChildScrollView(
+          child: Text(
+            'By using StorySpace, you agree to:\n\n'
+            '1. Use the app for personal, non-commercial purposes\n'
+            '2. Create appropriate content suitable for children\n'
+            '3. Respect intellectual property rights\n'
+            '4. Not misuse or abuse the AI generation service\n'
+            '5. Comply with all applicable laws and regulations\n\n'
+            'StorySpace reserves the right to:\n'
+            '- Modify or terminate the service at any time\n'
+            '- Remove content that violates our policies\n'
+            '- Update these terms with notice to users\n\n'
+            'For full terms, visit: storyspace.app/terms',
+            style: AppTextStyles.bodyMedium,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPrivacyPolicy() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Privacy Policy', style: AppTextStyles.titleLarge),
+        content: SingleChildScrollView(
+          child: Text(
+            'StorySpace Privacy Policy:\n\n'
+            'We collect:\n'
+            '- Account information (email, name)\n'
+            '- Kid profile information (name, age)\n'
+            '- Story generation preferences\n'
+            '- Usage analytics\n\n'
+            'We use this data to:\n'
+            '- Provide and improve our services\n'
+            '- Generate personalized stories\n'
+            '- Communicate with you about updates\n\n'
+            'We do NOT:\n'
+            '- Sell your personal information\n'
+            '- Share data with third parties without consent\n'
+            '- Use children\'s data for advertising\n\n'
+            'For full privacy policy, visit: storyspace.app/privacy',
+            style: AppTextStyles.bodyMedium,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -221,7 +288,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           style: AppTextStyles.bodySmall.copyWith(
                             color: AppColors.primary,
                             fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.underline,
                           ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = _showTermsAndConditions,
                         ),
                         const TextSpan(text: ' and '),
                         TextSpan(
@@ -229,7 +299,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           style: AppTextStyles.bodySmall.copyWith(
                             color: AppColors.primary,
                             fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.underline,
                           ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = _showPrivacyPolicy,
                         ),
                       ],
                     ),
@@ -297,7 +370,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 // Google Sign-In button
                 OutlinedButton.icon(
                   onPressed: authState.isLoading ? null : _handleGoogleSignUp,
-                  icon: const Icon(Icons.g_mobiledata, size: 32),
+                  icon: const Icon(Icons.account_circle, size: 24),
                   label: const Text('Continue with Google'),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
