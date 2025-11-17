@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../kid_profile/presentation/providers/kid_profile_providers.dart';
 import '../../../story/presentation/providers/story_providers.dart';
 import '../../../story/domain/entities/story_entity.dart';
@@ -132,39 +134,33 @@ class HomeScreen extends ConsumerWidget {
             // Search Bar
             Padding(
               padding: const EdgeInsets.only(top: 24.0, left: 16.0, right: 16.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: AppColors.surfaceVariant,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide.none,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide.none,
-                  ),
-                  hintText: 'Search for a story',
-                  prefixIcon: const Icon(Icons.search),
-                  suffixIcon: Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: CircleAvatar(
-                      backgroundColor: AppColors.primary,
-                      child: const Icon(
-                        Icons.mic,
-                        color: Colors.white,
-                        size: 20.0,
+              child: GestureDetector(
+                onTap: () {
+                  // Navigate to Library screen with search focused
+                  context.push(AppRoutes.library);
+                },
+                child: AbsorbPointer(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: AppColors.surfaceVariant,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        borderSide: BorderSide.none,
                       ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      hintText: 'Search for a story',
+                      prefixIcon: const Icon(Icons.search),
                     ),
                   ),
                 ),
-                onChanged: (value) {
-                  // TODO: Implement search
-                },
               ),
             ),
 
@@ -206,7 +202,8 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      // TODO: Navigate to all stories
+                      // Navigate to Library screen (shows all stories)
+                      context.push('/library');
                     },
                     child: Text(
                       'See all',
@@ -278,7 +275,14 @@ class HomeScreen extends ConsumerWidget {
                           return RecommendedStoryCard(
                             story: story,
                             onTap: () {
-                              // TODO: Navigate to story viewer
+                              // Navigate to story viewer
+                              context.push(
+                                AppRoutes.storyViewer,
+                                extra: {
+                                  'story': story,
+                                  'kidProfile': profile,
+                                },
+                              );
                             },
                           );
                         },

@@ -142,6 +142,8 @@ class StoryController extends _$StoryController {
     required String genre,
     required List<String> interests,
     String? customPrompt,
+    String? artStyle,
+    bool generateImages = false,
   }) async {
     state = const AsyncValue.loading();
 
@@ -163,6 +165,8 @@ class StoryController extends _$StoryController {
       genre: genre,
       interests: interests,
       customPrompt: customPrompt,
+      artStyle: artStyle,
+      generateImages: generateImages,
     );
 
     return result.fold(

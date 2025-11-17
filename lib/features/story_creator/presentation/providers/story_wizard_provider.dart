@@ -98,6 +98,8 @@ class StoryWizardNotifier extends _$StoryWizardNotifier {
         genre: state.selectedGenre,
         interests: state.selectedInterests,
         customPrompt: customPrompt,
+        artStyle: state.artStyle.label,
+        generateImages: true, // Enable image generation
       );
 
       if (success) {

@@ -171,27 +171,6 @@ class ProfileScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            if (tier != AppConstants.tierPremiumPlus) ...[
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton.icon(
-                  onPressed: () {
-                    // TODO: Navigate to subscription screen
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Subscription screen coming soon!'),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.workspace_premium),
-                  label: const Text('Upgrade Plan'),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.secondary,
-                  ),
-                ),
-              ),
-            ],
           ],
         ),
       ),
@@ -386,12 +365,7 @@ class ProfileScreen extends ConsumerWidget {
             title: const Text('Settings'),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
-              // TODO: Navigate to settings screen
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Settings screen coming soon!'),
-                ),
-              );
+              context.push(AppRoutes.settings);
             },
           ),
           const Divider(height: 1),
