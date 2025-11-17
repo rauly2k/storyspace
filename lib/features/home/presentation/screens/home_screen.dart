@@ -120,13 +120,6 @@ class HomeScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  // Right side: Notification bell
-                  IconButton(
-                    icon: const Icon(Icons.notifications_outlined),
-                    onPressed: () {
-                      // TODO: Implement notifications
-                    },
-                  ),
                 ],
               ),
             ),
