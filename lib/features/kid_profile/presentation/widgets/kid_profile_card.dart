@@ -8,11 +8,15 @@ import '../../domain/entities/kid_profile_entity.dart';
 class KidProfileCard extends StatelessWidget {
   final KidProfileEntity profile;
   final VoidCallback onTap;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   const KidProfileCard({
     super.key,
     required this.profile,
     required this.onTap,
+    this.onEdit,
+    this.onDelete,
   });
 
   @override
@@ -39,6 +43,7 @@ class KidProfileCard extends StatelessWidget {
         ),
         child: InkWell(
           onTap: onTap,
+          onLongPress: () => _showContextMenu(context),
           child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -84,6 +89,20 @@ class KidProfileCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                  // Edit/Delete menu button
+                  if (onEdit != null || onDelete != null)
+                    Positioned(
+                      top: 8,
+                      left: 8,
+                      child: IconButton(
+                        icon: const Icon(Icons.more_vert, color: Colors.white),
+                        onPressed: () => _showContextMenu(context),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.black.withOpacity(0.5),
+                          padding: const EdgeInsets.all(8),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -134,6 +153,44 @@ class KidProfileCard extends StatelessWidget {
         ),
       ),
     ),
+    );
+  }
+
+  void _showContextMenu(BuildContext context) {
+    if (onEdit == null && onDelete == null) return;
+
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (onEdit != null)
+              ListTile(
+                leading: const Icon(Icons.edit),
+                title: const Text('Edit Profile'),
+                onTap: () {
+                  Navigator.pop(context);
+                  onEdit!();
+                },
+              ),
+            if (onDelete != null)
+              ListTile(
+                leading: Icon(Icons.delete, color: AppColors.error),
+                title: Text('Delete Profile', style: TextStyle(color: AppColors.error)),
+                onTap: () {
+                  Navigator.pop(context);
+                  onDelete!();
+                },
+              ),
+            ListTile(
+              leading: const Icon(Icons.cancel),
+              title: const Text('Cancel'),
+              onTap: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

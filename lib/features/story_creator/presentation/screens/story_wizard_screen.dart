@@ -25,10 +25,7 @@ class StoryWizardScreen extends ConsumerWidget {
         actions: [
           if (wizardState.currentStep > 0)
             TextButton(
-              onPressed: () {
-                wizardNotifier.reset();
-                context.pop();
-              },
+              onPressed: () => _showCancelConfirmation(context, wizardNotifier),
               child: const Text('Cancel'),
             ),
         ],
@@ -201,5 +198,37 @@ class StoryWizardScreen extends ConsumerWidget {
       // Move to next step
       notifier.nextStep();
     }
+  }
+
+  void _showCancelConfirmation(
+    BuildContext context,
+    StoryWizardNotifier notifier,
+  ) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Cancel Story Creation'),
+        content: const Text(
+          'Are you sure you want to cancel? All your progress will be lost.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Continue Editing'),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              notifier.reset();
+              context.pop();
+            },
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.error,
+            ),
+            child: const Text('Cancel Creation'),
+          ),
+        ],
+      ),
+    );
   }
 }
