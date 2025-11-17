@@ -248,8 +248,8 @@ class StoryCreatorLauncherScreen extends ConsumerWidget {
 
   void _launchWizard(BuildContext context, WidgetRef ref, dynamic profile) {
     // Reset wizard state and select profile
-    ref.read(storyWizardNotifierProvider.notifier).reset();
-    ref.read(storyWizardNotifierProvider.notifier).selectProfile(profile);
+    ref.read(storyWizardProvider.notifier).reset();
+    ref.read(storyWizardProvider.notifier).selectProfile(profile);
 
     // Navigate to wizard
     context.push(AppRoutes.storyWizard);

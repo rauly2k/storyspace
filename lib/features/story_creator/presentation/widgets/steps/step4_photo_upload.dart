@@ -13,8 +13,8 @@ class Step4PhotoUpload extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final wizardState = ref.watch(storyWizardNotifierProvider);
-    final wizardNotifier = ref.read(storyWizardNotifierProvider.notifier);
+    final wizardState = ref.watch(storyWizardProvider);
+    final wizardNotifier = ref.read(storyWizardProvider.notifier);
     final currentUser = ref.watch(currentUserProvider).value;
 
     final isPremiumPlus = currentUser?.subscriptionTier == AppConstants.tierPremiumPlus;

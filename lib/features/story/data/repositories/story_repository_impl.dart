@@ -100,6 +100,8 @@ class StoryRepositoryImpl implements StoryRepository {
     required String genre,
     required List<String> interests,
     String? customPrompt,
+    String? artStyle,
+    bool generateImages = false,
   }) async {
     try {
       // Generate story content using Gemini

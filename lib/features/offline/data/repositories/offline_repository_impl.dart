@@ -53,7 +53,7 @@ class OfflineRepositoryImpl implements OfflineRepository {
       }
       if (!canDownload.getRight().toNullable()!) {
         return const Left(Failure.subscription(
-          'Download limit reached. Upgrade to download more stories.',
+          message: 'Download limit reached. Upgrade to download more stories.',
         ));
       }
 
@@ -124,7 +124,10 @@ class OfflineRepositoryImpl implements OfflineRepository {
 
       // Check if story is favorited
       final isFavoriteResult =
-          await _favoritesRepository.isFavorite(storyId, _currentUser.id);
+          await _favoritesRepository.isFavorite(
+            storyId: storyId,
+            userId: _currentUser.id,
+          );
       final isFavorite =
           isFavoriteResult.getOrElse((l) => false);
 
@@ -170,7 +173,7 @@ class OfflineRepositoryImpl implements OfflineRepository {
         status: DownloadStatus.failed,
         errorMessage: e.toString(),
       );
-      return Left(Failure.cache('Failed to download story: $e'));
+      return Left(Failure.cache(message: 'Failed to download story: $e'));
     }
   }
 
@@ -197,7 +200,7 @@ class OfflineRepositoryImpl implements OfflineRepository {
 
       return const Right(null);
     } catch (e) {
-      return Left(Failure.cache('Failed to delete download: $e'));
+      return Left(Failure.cache(message: 'Failed to delete download: $e'));
     }
   }
 
@@ -207,7 +210,7 @@ class OfflineRepositoryImpl implements OfflineRepository {
       final isDownloaded = await _localDataSource.isStoryDownloaded(storyId);
       return Right(isDownloaded);
     } catch (e) {
-      return Left(Failure.cache('Failed to check download status: $e'));
+      return Left(Failure.cache(message: 'Failed to check download status: $e'));
     }
   }
 
@@ -236,7 +239,7 @@ class OfflineRepositoryImpl implements OfflineRepository {
 
       return Right(stories);
     } catch (e) {
-      return Left(Failure.cache('Failed to get downloaded stories: $e'));
+      return Left(Failure.cache(message: 'Failed to get downloaded stories: $e'));
     }
   }
 
@@ -261,7 +264,7 @@ class OfflineRepositoryImpl implements OfflineRepository {
 
       return Right(info);
     } catch (e) {
-      return Left(Failure.cache('Failed to get download info: $e'));
+      return Left(Failure.cache(message: 'Failed to get download info: $e'));
     }
   }
 
@@ -303,7 +306,7 @@ class OfflineRepositoryImpl implements OfflineRepository {
 
       return Right(entity);
     } catch (e) {
-      return Left(Failure.cache('Failed to get download progress: $e'));
+      return Left(Failure.cache(message: 'Failed to get download progress: $e'));
     }
   }
 
@@ -325,7 +328,7 @@ class OfflineRepositoryImpl implements OfflineRepository {
 
       return Right(entities);
     } catch (e) {
-      return Left(Failure.cache('Failed to get active downloads: $e'));
+      return Left(Failure.cache(message: 'Failed to get active downloads: $e'));
     }
   }
 
@@ -344,7 +347,7 @@ class OfflineRepositoryImpl implements OfflineRepository {
 
       return const Right(null);
     } catch (e) {
-      return Left(Failure.cache('Failed to cancel download: $e'));
+      return Left(Failure.cache(message: 'Failed to cancel download: $e'));
     }
   }
 
@@ -356,7 +359,7 @@ class OfflineRepositoryImpl implements OfflineRepository {
       final count = await _localDataSource.getDownloadCount(_currentUser.id);
       return Right(count);
     } catch (e) {
-      return Left(Failure.cache('Failed to get download count: $e'));
+      return Left(Failure.cache(message: 'Failed to get download count: $e'));
     }
   }
 
@@ -366,7 +369,7 @@ class OfflineRepositoryImpl implements OfflineRepository {
       final size = await _localDataSource.getTotalStorageUsed(_currentUser.id);
       return Right(size);
     } catch (e) {
-      return Left(Failure.cache('Failed to get storage used: $e'));
+      return Left(Failure.cache(message: 'Failed to get storage used: $e'));
     }
   }
 
@@ -383,7 +386,7 @@ class OfflineRepositoryImpl implements OfflineRepository {
 
       return Right(count < limit);
     } catch (e) {
-      return Left(Failure.cache('Failed to check download limit: $e'));
+      return Left(Failure.cache(message: 'Failed to check download limit: $e'));
     }
   }
 
@@ -401,7 +404,7 @@ class OfflineRepositoryImpl implements OfflineRepository {
       final remaining = limit - count;
       return Right(remaining > 0 ? remaining : 0);
     } catch (e) {
-      return Left(Failure.cache('Failed to get remaining downloads: $e'));
+      return Left(Failure.cache(message: 'Failed to get remaining downloads: $e'));
     }
   }
 
@@ -429,7 +432,7 @@ class OfflineRepositoryImpl implements OfflineRepository {
       await _localDataSource.clearAllDownloads(_currentUser.id);
       return const Right(null);
     } catch (e) {
-      return Left(Failure.cache('Failed to clear downloads: $e'));
+      return Left(Failure.cache(message: 'Failed to clear downloads: $e'));
     }
   }
 
@@ -445,7 +448,10 @@ class OfflineRepositoryImpl implements OfflineRepository {
       // Sync each favorite with remote
       for (final story in localStories) {
         final isFavoriteResult =
-            await _favoritesRepository.isFavorite(story.id, _currentUser.id);
+            await _favoritesRepository.isFavorite(
+              storyId: story.id,
+              userId: _currentUser.id,
+            );
 
         if (isFavoriteResult.isRight()) {
           final isFavorite = isFavoriteResult.getRight().toNullable()!;
@@ -457,7 +463,7 @@ class OfflineRepositoryImpl implements OfflineRepository {
 
       return const Right(null);
     } catch (e) {
-      return Left(Failure.cache('Failed to sync favorites: $e'));
+      return Left(Failure.cache(message: 'Failed to sync favorites: $e'));
     }
   }
 
@@ -504,7 +510,7 @@ class OfflineRepositoryImpl implements OfflineRepository {
 
       return const Right(null);
     } catch (e) {
-      return Left(Failure.cache('Failed to sync read counts: $e'));
+      return Left(Failure.cache(message: 'Failed to sync read counts: $e'));
     }
   }
 
@@ -521,7 +527,7 @@ class OfflineRepositoryImpl implements OfflineRepository {
       final localStory = await _localDataSource.getStoryById(storyId);
 
       if (localStory == null) {
-        return const Left(Failure.cache('Story not found in offline storage'));
+        return const Left(Failure.cache(message: 'Story not found in offline storage'));
       }
 
       // Update local copy
@@ -543,7 +549,7 @@ class OfflineRepositoryImpl implements OfflineRepository {
 
       return const Right(null);
     } catch (e) {
-      return Left(Failure.cache('Failed to update offline story: $e'));
+      return Left(Failure.cache(message: 'Failed to update offline story: $e'));
     }
   }
 
@@ -556,7 +562,7 @@ class OfflineRepositoryImpl implements OfflineRepository {
       final path = await _localDataSource.getLocalPathForUrl(storyId, remoteUrl);
       return Right(path);
     } catch (e) {
-      return Left(Failure.cache('Failed to get local image path: $e'));
+      return Left(Failure.cache(message: 'Failed to get local image path: $e'));
     }
   }
 
@@ -577,12 +583,12 @@ class OfflineRepositoryImpl implements OfflineRepository {
       // Download and cache
       final path = await _downloadImage(storyId: storyId, imageUrl: remoteUrl);
       if (path == null) {
-        return const Left(Failure.cache('Failed to download image'));
+        return const Left(Failure.cache(message: 'Failed to download image'));
       }
 
       return Right(path);
     } catch (e) {
-      return Left(Failure.cache('Failed to cache image: $e'));
+      return Left(Failure.cache(message: 'Failed to cache image: $e'));
     }
   }
 
@@ -605,7 +611,7 @@ class OfflineRepositoryImpl implements OfflineRepository {
       await _localDataSource.deleteImagesForStory(storyId);
       return const Right(null);
     } catch (e) {
-      return Left(Failure.cache('Failed to clear images: $e'));
+      return Left(Failure.cache(message: 'Failed to clear images: $e'));
     }
   }
 

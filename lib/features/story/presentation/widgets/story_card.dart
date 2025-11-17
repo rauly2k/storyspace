@@ -32,12 +32,7 @@ class StoryCard extends ConsumerWidget {
         ? AppColors.getAgeBucketColor(kidProfile!.ageBucket)
         : AppColors.primary;
 
-    final semanticLabel = AccessibilityUtils.storyCardLabel(
-      title: story.title,
-      author: story.author,
-      pageCount: story.pageCount,
-      isFavorite: story.isFavorite,
-    );
+    final semanticLabel = 'Story: ${story.title}. ${story.readingTimeDisplay}. ${story.readCountDisplay}';
 
     return Semantics(
       label: semanticLabel,

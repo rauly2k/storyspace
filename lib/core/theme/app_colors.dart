@@ -65,6 +65,12 @@ class AppColors {
     end: Alignment.bottomRight,
   );
 
+  static const LinearGradient backgroundGradient = LinearGradient(
+    colors: [Color(0xFFFFF8F0), Color(0xFFFFE9E0)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
+
   /// Get color for age bucket
   static Color getAgeBucketColor(String ageBucket) {
     switch (ageBucket.toLowerCase()) {

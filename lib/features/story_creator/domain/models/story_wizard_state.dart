@@ -6,7 +6,7 @@ part 'story_wizard_state.freezed.dart';
 
 /// State for the story creation wizard
 @freezed
-class StoryWizardState with _$StoryWizardState {
+abstract class StoryWizardState with _$StoryWizardState {
   const factory StoryWizardState({
     // Current step (0-4)
     @Default(0) int currentStep,

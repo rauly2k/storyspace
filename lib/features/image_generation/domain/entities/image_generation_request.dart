@@ -6,7 +6,7 @@ part 'image_generation_request.freezed.dart';
 
 /// Request entity for generating a story image
 @freezed
-class ImageGenerationRequest with _$ImageGenerationRequest {
+abstract class ImageGenerationRequest with _$ImageGenerationRequest {
   const factory ImageGenerationRequest({
     required String prompt,
     required ArtStyle artStyle,

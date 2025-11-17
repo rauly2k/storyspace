@@ -5,7 +5,7 @@ part 'reading_preferences.g.dart';
 
 /// Reading preferences for story viewer customization
 @freezed
-class ReadingPreferences with _$ReadingPreferences {
+abstract class ReadingPreferences with _$ReadingPreferences {
   const factory ReadingPreferences({
     @Default(ReadingFontSize.medium) ReadingFontSize fontSize,
     @Default(ReadingTheme.light) ReadingTheme theme,

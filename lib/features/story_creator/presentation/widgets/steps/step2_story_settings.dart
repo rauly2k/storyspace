@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../domain/models/story_wizard_state.dart';
+import '../../../domain/models/story_wizard_state.dart';
 import '../../providers/story_wizard_provider.dart';
 
 /// Step 2: Story settings (genre, length, interests, moral)
@@ -34,8 +34,8 @@ class Step2StorySettings extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final wizardState = ref.watch(storyWizardNotifierProvider);
-    final wizardNotifier = ref.read(storyWizardNotifierProvider.notifier);
+    final wizardState = ref.watch(storyWizardProvider);
+    final wizardNotifier = ref.read(storyWizardProvider.notifier);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),

@@ -36,6 +36,20 @@ abstract class KidProfileEntity with _$KidProfileEntity {
     }
   }
 
+  /// Get age bucket name in Romanian
+  String get ageBucketNameRo {
+    switch (ageBucket.toLowerCase()) {
+      case 'sprout':
+        return 'Boboc (3-5)';
+      case 'explorer':
+        return 'Explorator (6-8)';
+      case 'visionary':
+        return 'Vizionar (9-12)';
+      default:
+        return ageBucket;
+    }
+  }
+
   /// Get first initial for avatar
   String get initial => name.isNotEmpty ? name[0].toUpperCase() : '?';
 }

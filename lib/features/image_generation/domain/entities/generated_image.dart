@@ -4,7 +4,7 @@ part 'generated_image.freezed.dart';
 
 /// Represents a generated image result
 @freezed
-class GeneratedImage with _$GeneratedImage {
+abstract class GeneratedImage with _$GeneratedImage {
   const factory GeneratedImage({
     required String id,
     required String url,

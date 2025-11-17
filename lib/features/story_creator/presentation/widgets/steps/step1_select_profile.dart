@@ -12,8 +12,8 @@ class Step1SelectProfile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profilesAsync = ref.watch(kidProfilesProvider);
-    final wizardState = ref.watch(storyWizardNotifierProvider);
-    final wizardNotifier = ref.read(storyWizardNotifierProvider.notifier);
+    final wizardState = ref.watch(storyWizardProvider);
+    final wizardNotifier = ref.read(storyWizardProvider.notifier);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),

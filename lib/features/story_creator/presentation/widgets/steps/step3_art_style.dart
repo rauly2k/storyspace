@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../auth/presentation/providers/auth_providers.dart';
-import '../../domain/models/story_wizard_state.dart';
+import '../../../domain/models/story_wizard_state.dart';
 import '../../providers/story_wizard_provider.dart';
 
 /// Step 3: Art style selection (Premium+ feature)
@@ -12,8 +12,8 @@ class Step3ArtStyle extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final wizardState = ref.watch(storyWizardNotifierProvider);
-    final wizardNotifier = ref.read(storyWizardNotifierProvider.notifier);
+    final wizardState = ref.watch(storyWizardProvider);
+    final wizardNotifier = ref.read(storyWizardProvider.notifier);
     final currentUser = ref.watch(currentUserProvider).value;
 
     final isPremiumPlus = currentUser?.subscriptionTier == AppConstants.tierPremiumPlus;

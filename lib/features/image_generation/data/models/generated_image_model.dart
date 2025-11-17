@@ -2,11 +2,11 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../domain/entities/generated_image.dart';
 
 part 'generated_image_model.freezed.dart';
-part 'generated_image_model.g.json.dart';
+part 'generated_image_model.g.dart';
 
 /// Data model for GeneratedImage
 @freezed
-class GeneratedImageModel with _$GeneratedImageModel {
+abstract class GeneratedImageModel with _$GeneratedImageModel {
   const GeneratedImageModel._();
 
   const factory GeneratedImageModel({
