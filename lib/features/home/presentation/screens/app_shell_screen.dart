@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/router/app_router.dart';
+import '../../../kid_profile/presentation/providers/kid_profile_providers.dart';
+import '../../../story/presentation/providers/story_providers.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
 import 'home_screen.dart';
 import 'library_screen.dart';
 import 'settings_screen.dart';
@@ -31,10 +37,24 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final currentKidProfile = ref.watch(currentKidProfileProvider);
+
     return Scaffold(
       body: IndexedStack(
         index: _selectedIndex,
         children: _screens,
+      ),
+      floatingActionButton: currentKidProfile.maybeWhen(
+        data: (profile) {
+          if (profile == null) return null;
+          return FloatingActionButton.extended(
+            onPressed: () => _showStoryTypeDialog(context, profile),
+            icon: const Icon(Icons.auto_awesome),
+            label: const Text('Create Story'),
+            backgroundColor: AppColors.primary,
+          );
+        },
+        orElse: () => null,
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
@@ -117,6 +137,108 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showStoryTypeDialog(BuildContext context, dynamic profile) {
+    final currentUser = ref.read(currentUserProvider).value;
+    final aiStoryCountAsync = ref.read(aiStoryCountProvider);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Create New Story'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.auto_awesome),
+              title: const Text('Generate AI Story'),
+              subtitle: aiStoryCountAsync.when(
+                data: (count) {
+                  final limit = AppConstants.getAIStoryLimit(
+                    currentUser?.subscriptionTier ?? 'free',
+                  );
+                  if (limit != -1 && count >= limit) {
+                    return const Text(
+                      'Limit reached. Upgrade to create more!',
+                      style: TextStyle(color: AppColors.error),
+                    );
+                  }
+                  return Text(limit == -1 ? 'Unlimited' : '${limit - count} remaining');
+                },
+                loading: () => const Text('Loading...'),
+                error: (_, __) => const Text(''),
+              ),
+              onTap: () {
+                aiStoryCountAsync.whenData((count) {
+                  final limit = AppConstants.getAIStoryLimit(
+                    currentUser?.subscriptionTier ?? 'free',
+                  );
+                  if (limit != -1 && count >= limit) {
+                    Navigator.of(context).pop();
+                    _showUpgradeDialog(context);
+                    return;
+                  }
+
+                  Navigator.of(context).pop();
+                  context.go(AppRoutes.storyWizard);
+                });
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.edit),
+              title: const Text('Write Manual Story'),
+              subtitle: const Text('Create your own story'),
+              onTap: () {
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Manual story creation coming soon!'),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showUpgradeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Upgrade Required'),
+        content: const Text(
+          'You\'ve reached your AI story limit. Upgrade to Premium or Premium+ '
+          'to generate unlimited stories!',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Maybe Later'),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Subscription management coming soon!'),
+                ),
+              );
+            },
+            child: const Text('Upgrade'),
+          ),
+        ],
       ),
     );
   }

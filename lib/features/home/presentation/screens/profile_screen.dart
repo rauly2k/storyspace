@@ -278,7 +278,7 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 TextButton.icon(
                   onPressed: () {
-                    context.go(AppRoutes.home);
+                    context.go(AppRoutes.kidProfiles);
                   },
                   icon: const Icon(Icons.edit, size: 18),
                   label: const Text('Manage'),
@@ -341,7 +341,7 @@ class ProfileScreen extends ConsumerWidget {
               Center(
                 child: TextButton(
                   onPressed: () {
-                    context.go(AppRoutes.home);
+                    context.go(AppRoutes.kidProfiles);
                   },
                   child: Text('View all ${profiles.length} profiles'),
                 ),
