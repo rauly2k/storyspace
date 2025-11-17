@@ -275,6 +275,14 @@ class HomeScreen extends ConsumerWidget {
                                   color: AppColors.textSecondary,
                                 ),
                               ),
+                              const SizedBox(height: 12.0),
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  context.go(AppRoutes.storyWizard);
+                                },
+                                icon: const Icon(Icons.auto_awesome),
+                                label: const Text('Generate Story'),
+                              ),
                             ],
                           ),
                         ),
