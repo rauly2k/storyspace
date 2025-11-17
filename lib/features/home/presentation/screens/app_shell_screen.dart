@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'home_screen.dart';
 import 'library_screen.dart';
-import 'chat_screen.dart';
 import 'settings_screen.dart';
 
 /// Main app shell with bottom navigation bar
@@ -21,7 +20,6 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen> {
   static const List<Widget> _screens = [
     HomeScreen(),
     LibraryScreen(),
-    ChatScreen(),
     SettingsScreen(),
   ];
 
@@ -68,16 +66,10 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen> {
                   index: 1,
                 ),
                 _buildNavItem(
-                  icon: Icons.chat_bubble_outline,
-                  selectedIcon: Icons.chat_bubble,
-                  label: 'Chat',
-                  index: 2,
-                ),
-                _buildNavItem(
                   icon: Icons.settings_outlined,
                   selectedIcon: Icons.settings,
                   label: 'Settings',
-                  index: 3,
+                  index: 2,
                 ),
               ],
             ),

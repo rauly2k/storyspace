@@ -5,6 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/services/preferences_service.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../kid_profile/presentation/providers/kid_profile_providers.dart';
 import '../../../story/presentation/providers/story_providers.dart';
@@ -171,27 +172,6 @@ class ProfileScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            if (tier != AppConstants.tierPremiumPlus) ...[
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton.icon(
-                  onPressed: () {
-                    // TODO: Navigate to subscription screen
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Subscription screen coming soon!'),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.workspace_premium),
-                  label: const Text('Upgrade Plan'),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.secondary,
-                  ),
-                ),
-              ),
-            ],
           ],
         ),
       ),
@@ -236,12 +216,7 @@ class ProfileScreen extends ConsumerWidget {
                   value: profiles.length.toString(),
                   color: AppColors.secondary,
                 ),
-                _buildStatItem(
-                  icon: Icons.auto_awesome,
-                  label: 'Days Active',
-                  value: '0', // TODO: Calculate actual streak
-                  color: AppColors.accent,
-                ),
+                _buildStreakStatItem(ref),
               ],
             ),
           ],
@@ -386,12 +361,7 @@ class ProfileScreen extends ConsumerWidget {
             title: const Text('Settings'),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
-              // TODO: Navigate to settings screen
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Settings screen coming soon!'),
-                ),
-              );
+              context.push(AppRoutes.settings);
             },
           ),
           const Divider(height: 1),
@@ -532,6 +502,48 @@ class ProfileScreen extends ConsumerWidget {
             child: const Text('Close'),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildStreakStatItem(WidgetRef ref) {
+    final userAsync = ref.watch(currentUserProvider);
+
+    return userAsync.when(
+      data: (user) {
+        if (user == null) {
+          return _buildStatItem(
+            icon: Icons.auto_awesome,
+            label: 'Days Active',
+            value: '0',
+            color: AppColors.accent,
+          );
+        }
+
+        return FutureBuilder<int>(
+          future: PreferencesService.getUserStreak(user.id),
+          builder: (context, snapshot) {
+            final streak = snapshot.data ?? 0;
+            return _buildStatItem(
+              icon: Icons.auto_awesome,
+              label: 'Days Active',
+              value: streak.toString(),
+              color: AppColors.accent,
+            );
+          },
+        );
+      },
+      loading: () => _buildStatItem(
+        icon: Icons.auto_awesome,
+        label: 'Days Active',
+        value: '...',
+        color: AppColors.accent,
+      ),
+      error: (_, __) => _buildStatItem(
+        icon: Icons.auto_awesome,
+        label: 'Days Active',
+        value: '0',
+        color: AppColors.accent,
       ),
     );
   }

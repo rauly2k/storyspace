@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/services/preferences_service.dart';
 import '../widgets/onboarding_wave_clipper.dart';
 
 /// Onboarding screen with 3 slides introducing the app
@@ -51,10 +52,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _completeOnboarding();
   }
 
-  void _completeOnboarding() {
-    // TODO: Mark onboarding as completed (e.g., save to SharedPreferences)
+  void _completeOnboarding() async {
+    // Mark onboarding as completed
+    await PreferencesService.setOnboardingCompleted();
+
     // Navigate to login screen
-    context.go(AppRoutes.login);
+    if (mounted) {
+      context.go(AppRoutes.login);
+    }
   }
 
   @override

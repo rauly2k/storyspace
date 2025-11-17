@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/providers/reading_preferences_provider.dart';
+import '../../../../core/services/preferences_service.dart';
 import '../../../kid_profile/domain/entities/kid_profile_entity.dart';
 import '../../../favorites/presentation/providers/favorites_providers.dart';
 import '../../../audio_narration/presentation/widgets/audio_controls.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../domain/entities/story_entity.dart';
 import '../providers/story_providers.dart';
 import '../widgets/reading_controls.dart';
@@ -52,6 +54,13 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen> {
 
     final controller = ref.read(storyControllerProvider.notifier);
     await controller.markAsRead(storyId: widget.story.id);
+
+    // Increment user reading streak
+    final user = await ref.read(currentUserProvider.future);
+    if (user != null) {
+      await PreferencesService.incrementStreak(user.id);
+    }
+
     _hasMarkedAsRead = true;
   }
 

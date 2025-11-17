@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/services/preferences_service.dart';
 
 /// Splash screen with logo and fade-in animation
 /// Shows briefly before navigating to onboarding or home based on auth state
@@ -54,8 +55,15 @@ class _SplashScreenState extends State<SplashScreen>
 
     if (!mounted) return;
 
-    // Navigate to onboarding (router will handle auth redirects)
-    context.go(AppRoutes.onboarding);
+    // Check if onboarding has been completed
+    final onboardingCompleted = await PreferencesService.isOnboardingCompleted();
+
+    // Navigate to appropriate screen
+    if (onboardingCompleted) {
+      context.go(AppRoutes.login);
+    } else {
+      context.go(AppRoutes.onboarding);
+    }
   }
 
   @override

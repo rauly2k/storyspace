@@ -46,9 +46,8 @@ Future<bool> audioNarrationEnabled(Ref ref) async {
   final user = await ref.watch(currentUserProvider.future);
   if (user == null) return false;
 
-  // Audio narration is available for Premium and Premium+ tiers
-  return user.subscriptionTier == AppConstants.tierPremium ||
-      user.subscriptionTier == AppConstants.tierPremiumPlus;
+  // Audio narration is available for all users
+  return true;
 }
 
 // ==================== CONTROLLER ====================
@@ -64,16 +63,6 @@ class TTSController extends _$TTSController {
   /// Speak the given text
   Future<bool> speak(String text) async {
     state = const AsyncValue.loading();
-
-    // Check if audio is enabled for user
-    final isEnabled = await ref.read(audioNarrationEnabledProvider.future);
-    if (!isEnabled) {
-      state = AsyncValue.error(
-        Exception('Audio narration requires Premium subscription'),
-        StackTrace.current,
-      );
-      return false;
-    }
 
     final repository = ref.read(ttsRepositoryProvider);
     final result = await repository.speak(text);

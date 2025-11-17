@@ -82,9 +82,7 @@ class KidProfilesScreen extends ConsumerWidget {
               );
 
               return FloatingActionButton.extended(
-                onPressed: canCreate
-                    ? () => _navigateToCreateProfile(context)
-                    : () => _showUpgradeDialog(context),
+                onPressed: () => _navigateToCreateProfile(context),
                 icon: const Icon(Icons.add),
                 label: const Text('Add Profile'),
               );
@@ -189,11 +187,6 @@ class KidProfilesScreen extends ConsumerWidget {
                             ],
                           ),
                         ),
-                        if (tier == AppConstants.tierFree)
-                          TextButton(
-                            onPressed: () => _showUpgradeDialog(context),
-                            child: const Text('Upgrade'),
-                          ),
                       ],
                     ),
                   ],
@@ -223,8 +216,8 @@ class KidProfilesScreen extends ConsumerWidget {
     required int currentProfileCount,
     required String subscriptionTier,
   }) {
-    final limit = AppConstants.getKidProfileLimit(subscriptionTier);
-    return currentProfileCount < limit;
+    // No limits - all users can create unlimited profiles
+    return true;
   }
 
   int _getProfileLimit(String tier) {

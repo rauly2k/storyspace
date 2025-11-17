@@ -9,6 +9,8 @@ import '../../features/story/presentation/screens/story_library_screen.dart';
 import '../../features/story/presentation/screens/story_viewer_screen.dart';
 import '../../features/story/presentation/screens/generate_story_screen.dart';
 import '../../features/story_creator/presentation/screens/story_wizard_screen.dart';
+import '../../features/home/presentation/screens/library_screen.dart';
+import '../../features/home/presentation/screens/settings_screen.dart';
 import '../../features/kid_profile/domain/entities/kid_profile_entity.dart';
 import '../../features/story/domain/entities/story_entity.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
@@ -26,6 +28,8 @@ class AppRoutes {
   static const String storyViewer = '/story-viewer';
   static const String generateStory = '/generate-story';
   static const String storyWizard = '/story-wizard';
+  static const String library = '/library';
+  static const String settings = '/settings';
 }
 
 /// GoRouter provider with auth redirect logic
@@ -111,6 +115,14 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: AppRoutes.storyWizard,
         builder: (context, state) => const StoryWizardScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.library,
+        builder: (context, state) => const LibraryScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settings,
+        builder: (context, state) => const SettingsScreen(),
       ),
     ],
   );
