@@ -158,73 +158,19 @@ class StoryLibraryScreen extends ConsumerWidget {
     final currentUser = ref.read(currentUserProvider).value;
     final aiStoryCountAsync = ref.read(aiStoryCountProvider);
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Create New Story'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.auto_awesome),
-              title: const Text('Generate AI Story'),
-              subtitle: aiStoryCountAsync.when(
-                data: (count) {
-                  final limit = AppConstants.getAIStoryLimit(
-                    currentUser?.subscriptionTier ?? 'free',
-                  );
-                  if (limit != -1 && count >= limit) {
-                    return const Text(
-                      'Limit reached. Upgrade to create more!',
-                      style: TextStyle(color: AppColors.error),
-                    );
-                  }
-                  return Text(limit == -1 ? 'Unlimited' : '${limit - count} remaining');
-                },
-                loading: () => const Text('Loading...'),
-                error: (_, __) => const Text(''),
-              ),
-              onTap: () {
-                aiStoryCountAsync.whenData((count) {
-                  final limit = AppConstants.getAIStoryLimit(
-                    currentUser?.subscriptionTier ?? 'free',
-                  );
-                  if (limit != -1 && count >= limit) {
-                    Navigator.of(context).pop();
-                    _showUpgradeDialog(context);
-                    return;
-                  }
+    // Check if user has reached limit
+    aiStoryCountAsync.whenData((count) {
+      final limit = AppConstants.getAIStoryLimit(
+        currentUser?.subscriptionTier ?? 'free',
+      );
+      if (limit != -1 && count >= limit) {
+        _showUpgradeDialog(context);
+        return;
+      }
 
-                  Navigator.of(context).pop();
-                  context.push(AppRoutes.storyWizard);
-                });
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.edit),
-              title: const Text('Write Manual Story'),
-              subtitle: const Text('Create your own story'),
-              onTap: () {
-                Navigator.of(context).pop();
-                // TODO: Navigate to manual story creation screen
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Manual story creation coming soon!'),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-        ],
-      ),
-    );
+      // Directly navigate to story wizard
+      context.push(AppRoutes.storyWizard);
+    });
   }
 
   void _showUpgradeDialog(BuildContext context) {
@@ -244,14 +190,9 @@ class StoryLibraryScreen extends ConsumerWidget {
           FilledButton(
             onPressed: () {
               Navigator.of(context).pop();
-              // TODO: Navigate to subscription screen
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Subscription screen coming soon!'),
-                ),
-              );
+              context.push(AppRoutes.subscription);
             },
-            child: const Text('Upgrade Now'),
+            child: const Text('View Plans'),
           ),
         ],
       ),

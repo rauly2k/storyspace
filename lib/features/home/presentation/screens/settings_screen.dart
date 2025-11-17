@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 
 /// Settings screen with account management and app preferences
@@ -44,6 +45,28 @@ class SettingsScreen extends ConsumerWidget {
                 title: 'Email',
                 subtitle: user.email,
                 onTap: null, // Email is read-only
+              ),
+              _SettingsTile(
+                icon: Icons.star,
+                title: 'Subscription',
+                subtitle: '${user.subscriptionTier.toUpperCase()} plan',
+                iconColor: AppColors.getSubscriptionColor(user.subscriptionTier),
+                onTap: () {
+                  context.push(AppRoutes.subscription);
+                },
+              ),
+
+              const Divider(height: 32.0),
+
+              // Kid Profiles Section
+              _SectionHeader(title: 'Kid Profiles'),
+              _SettingsTile(
+                icon: Icons.family_restroom,
+                title: 'Manage Profiles',
+                subtitle: 'Create, edit, and delete profiles',
+                onTap: () {
+                  context.push(AppRoutes.kidProfiles);
+                },
               ),
 
               const Divider(height: 32.0),

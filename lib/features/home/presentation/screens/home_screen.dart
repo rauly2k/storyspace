@@ -221,18 +221,26 @@ class HomeScreen extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            Icons.family_restroom,
-                            size: 48.0,
-                            color: AppColors.textSecondary,
+                            Icons.person_add_outlined,
+                            size: 64.0,
+                            color: AppColors.primary,
+                          ),
+                          const SizedBox(height: 16.0),
+                          Text(
+                            'Create a Kid Profile',
+                            style: textTheme.titleMedium?.copyWith(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 8.0),
                           Text(
-                            'No kid profile found',
+                            'Get started by adding a profile',
                             style: textTheme.bodyMedium?.copyWith(
                               color: AppColors.textSecondary,
                             ),
                           ),
-                          const SizedBox(height: 12.0),
+                          const SizedBox(height: 16.0),
                           ElevatedButton.icon(
                             onPressed: () {
                               context.go(AppRoutes.createKidProfile);
@@ -257,31 +265,38 @@ class HomeScreen extends ConsumerWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
-                                Icons.book_outlined,
-                                size: 48.0,
-                                color: AppColors.textSecondary,
+                                Icons.auto_stories_outlined,
+                                size: 64.0,
+                                color: AppColors.primary,
+                              ),
+                              const SizedBox(height: 16.0),
+                              Text(
+                                'No Stories Yet!',
+                                style: textTheme.titleMedium?.copyWith(
+                                  color: AppColors.textPrimary,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               const SizedBox(height: 8.0),
                               Text(
-                                'No stories yet',
+                                'Create your first magical story',
                                 style: textTheme.bodyMedium?.copyWith(
                                   color: AppColors.textSecondary,
                                 ),
                               ),
-                              const SizedBox(height: 4.0),
-                              Text(
-                                'Create your first story!',
-                                style: textTheme.bodySmall?.copyWith(
-                                  color: AppColors.textSecondary,
-                                ),
-                              ),
-                              const SizedBox(height: 12.0),
+                              const SizedBox(height: 16.0),
                               ElevatedButton.icon(
                                 onPressed: () {
                                   context.go(AppRoutes.storyWizard);
                                 },
                                 icon: const Icon(Icons.auto_awesome),
-                                label: const Text('Generate Story'),
+                                label: const Text('Create Story'),
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24.0,
+                                    vertical: 12.0,
+                                  ),
+                                ),
                               ),
                             ],
                           ),

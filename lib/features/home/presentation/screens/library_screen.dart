@@ -216,23 +216,39 @@ class _AllStoriesView extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  Icons.book_outlined,
+                  Icons.auto_stories_outlined,
                   size: 80.0,
                   color: AppColors.textSecondary,
                 ),
                 const SizedBox(height: 16.0),
                 Text(
-                  'No stories yet',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: AppColors.textSecondary,
+                  'Your Library is Empty',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.bold,
                       ),
                 ),
                 const SizedBox(height: 8.0),
                 Text(
-                  'Create your first story!',
+                  'Start creating magical stories\nfor your kids!',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: AppColors.textSecondary,
                       ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24.0),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    context.go(AppRoutes.storyWizard);
+                  },
+                  icon: const Icon(Icons.auto_awesome),
+                  label: const Text('Create Your First Story'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0,
+                      vertical: 16.0,
+                    ),
+                  ),
                 ),
               ],
             ),
