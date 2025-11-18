@@ -17,6 +17,7 @@ import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../../features/kid_profile/presentation/screens/kid_profiles_screen.dart';
 import '../../features/kid_profile/presentation/screens/create_kid_profile_screen.dart';
 import '../../features/kid_profile/presentation/providers/kid_profile_providers.dart';
+import '../../features/subscription/presentation/screens/subscription_screen.dart';
 
 part 'app_router.g.dart';
 
@@ -35,6 +36,7 @@ class AppRoutes {
   static const String storyWizard = '/story-wizard';
   static const String library = '/library';
   static const String settings = '/settings';
+  static const String subscription = '/subscription';
 }
 
 /// GoRouter provider with auth redirect logic
@@ -158,6 +160,10 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: AppRoutes.settings,
         builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.subscription,
+        builder: (context, state) => const SubscriptionScreen(),
       ),
     ],
   );

@@ -4,14 +4,14 @@ import 'package:pdf/widgets.dart' as pw';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/error/failures.dart';
-import '../../../story/domain/entities/story.dart';
+import '../../../story/domain/entities/story_entity.dart';
 import 'package:fpdart/fpdart.dart';
 
 /// PDF Export Repository Implementation
 /// Generates beautiful PDFs from stories
 class PdfExportRepositoryImpl {
   /// Export story to PDF
-  Future<Either<Failure, String>> exportStoryToPdf(Story story) async {
+  Future<Either<Failure, String>> exportStoryToPdf(StoryEntity story) async {
     try {
       final pdf = pw.Document();
 
@@ -163,7 +163,7 @@ class PdfExportRepositoryImpl {
   }
 
   /// Export and share PDF
-  Future<Either<Failure, void>> exportAndSharePdf(Story story) async {
+  Future<Either<Failure, void>> exportAndSharePdf(StoryEntity story) async {
     try {
       final result = await exportStoryToPdf(story);
 
