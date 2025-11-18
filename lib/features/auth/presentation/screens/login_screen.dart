@@ -266,7 +266,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 // Google Sign-In button
                 OutlinedButton.icon(
                   onPressed: authState.isLoading ? null : _handleGoogleSignIn,
-                  icon: const Icon(Icons.g_mobiledata, size: 32),
+                  icon: const Icon(Icons.account_circle, size: 24),
                   label: const Text('Continue with Google'),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),

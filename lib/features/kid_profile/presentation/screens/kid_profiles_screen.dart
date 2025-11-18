@@ -10,6 +10,7 @@ import '../../../auth/presentation/providers/auth_providers.dart';
 import '../providers/kid_profile_providers.dart';
 import '../widgets/kid_profile_card.dart';
 import 'create_kid_profile_screen.dart';
+import 'edit_kid_profile_screen.dart';
 
 /// Kid profiles list screen with grid of profile cards
 class KidProfilesScreen extends ConsumerWidget {
@@ -147,6 +148,8 @@ class KidProfilesScreen extends ConsumerWidget {
                   child: KidProfileCard(
                     profile: profile,
                     onTap: () => _onProfileTap(context, profile),
+                    onEdit: () => _onProfileEdit(context, profile),
+                    onDelete: () => _onProfileDelete(context, ref, profile),
                   ),
                 );
               },
@@ -210,6 +213,101 @@ class KidProfilesScreen extends ConsumerWidget {
   void _onProfileTap(BuildContext context, dynamic profile) {
     // Navigate to story library for the selected profile
     context.push(AppRoutes.storyLibrary, extra: profile);
+  }
+
+  void _onProfileEdit(BuildContext context, dynamic profile) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => EditKidProfileScreen(profile: profile),
+      ),
+    );
+  }
+
+  void _onProfileDelete(BuildContext context, WidgetRef ref, dynamic profile) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.warning, color: AppColors.error),
+            const SizedBox(width: 8),
+            const Text('Delete Profile'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Are you sure you want to delete ${profile.name}\'s profile?',
+              style: AppTextStyles.bodyMedium.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'This will permanently delete:',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            const Text('• All stories for this profile'),
+            const Text('• Profile information and settings'),
+            const Text('• Reading history and favorites'),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.error.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppColors.error),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.info_outline, color: AppColors.error, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'This action cannot be undone.',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.error,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              Navigator.of(dialogContext).pop();
+              final success = await ref
+                  .read(kidProfileControllerProvider.notifier)
+                  .deleteKidProfile(profile.id);
+
+              if (context.mounted && success) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('${profile.name}\'s profile deleted successfully'),
+                    backgroundColor: AppColors.success,
+                  ),
+                );
+              }
+            },
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.error,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
   }
 
   bool _canCreateProfile({
