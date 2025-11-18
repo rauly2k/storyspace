@@ -1,0 +1,94 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidUser() {
+      return isSignedIn()
+        && request.resource.data.keys().hasAll(['email', 'createdAt'])
+        && request.resource.data.email is string
+        && request.resource.data.createdAt is timestamp;
+    }
+
+    function isValidKidProfile() {
+      return isSignedIn()
+        && request.resource.data.keys().hasAll(['userId', 'name', 'age', 'ageBucket', 'createdAt'])
+        && request.resource.data.name is string
+        && request.resource.data.age is int
+        && request.resource.data.age >= 1
+        && request.resource.data.age <= 12
+        && request.resource.data.userId == request.auth.uid;
+    }
+
+    function isValidStory() {
+      return isSignedIn()
+        && request.resource.data.keys().hasAll(['userId', 'title', 'content', 'createdAt'])
+        && request.resource.data.title is string
+        && request.resource.data.content is string
+        && request.resource.data.userId == request.auth.uid;
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUser();
+      allow update: if isOwner(userId);
+      allow delete: if isOwner(userId);
+    }
+
+    // Kid profiles collection
+    match /kid_profiles/{profileId} {
+      allow read: if isOwner(resource.data.userId);
+      allow create: if isValidKidProfile();
+      allow update: if isOwner(resource.data.userId);
+      allow delete: if isOwner(resource.data.userId);
+    }
+
+    // Stories collection
+    match /stories/{storyId} {
+      // Users can read their own stories and pre-made stories (where userId is null or 'system')
+      allow read: if isSignedIn() &&
+        (resource.data.userId == request.auth.uid ||
+         resource.data.userId == null ||
+         resource.data.userId == 'system');
+
+      // Only authenticated users can create stories for themselves
+      allow create: if isValidStory();
+
+      // Users can only update their own stories
+      allow update: if isOwner(resource.data.userId);
+
+      // Users can only delete their own stories
+      allow delete: if isOwner(resource.data.userId);
+    }
+
+    // Favorites collection
+    match /favorites/{favoriteId} {
+      allow read: if isOwner(resource.data.userId);
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isOwner(resource.data.userId);
+      allow delete: if isOwner(resource.data.userId);
+    }
+
+    // AI generation usage tracking
+    match /ai_usage/{userId} {
+      allow read: if isOwner(userId);
+      allow write: if isOwner(userId);
+    }
+
+    // Subscriptions (read-only for users, write by backend)
+    match /subscriptions/{userId} {
+      allow read: if isOwner(userId);
+      allow write: if false; // Only backend can write
+    }
+  }
+}

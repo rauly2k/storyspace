@@ -1,0 +1,50 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidImageSize() {
+      return request.resource.size < 10 * 1024 * 1024; // 10MB limit
+    }
+
+    function isValidImageType() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    // Kid profile photos
+    match /kid_profiles/{userId}/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if isOwner(userId) && isValidImageSize() && isValidImageType();
+      allow delete: if isOwner(userId);
+    }
+
+    // Story images (generated or uploaded)
+    match /stories/{userId}/{storyId}/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if isOwner(userId) && isValidImageSize() && isValidImageType();
+      allow delete: if isOwner(userId);
+    }
+
+    // User uploaded photos for AI story generation
+    match /uploads/{userId}/{fileName} {
+      allow read: if isOwner(userId);
+      allow write: if isOwner(userId) && isValidImageSize() && isValidImageType();
+      allow delete: if isOwner(userId);
+    }
+
+    // Pre-made story images (public read, admin write only)
+    match /pre_made_stories/{fileName} {
+      allow read: if true;
+      allow write: if false; // Only admin/backend can write
+    }
+  }
+}
