@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/providers/reading_preferences_provider.dart';
 import '../../../../core/services/preferences_service.dart';
+import '../../../../core/router/app_router.dart';
+import '../../../../core/constants/app_constants.dart';
 import '../../../kid_profile/domain/entities/kid_profile_entity.dart';
 import '../../../favorites/presentation/providers/favorites_providers.dart';
 import '../../../audio_narration/presentation/widgets/audio_controls.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
+import '../../../pdf_export/presentation/providers/pdf_export_providers.dart';
 import '../../domain/entities/story_entity.dart';
 import '../providers/story_providers.dart';
 import '../widgets/reading_controls.dart';
@@ -141,9 +145,42 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen> {
               );
             },
           ),
+          // More options menu
+          PopupMenuButton<String>(
+            icon: Icon(Icons.more_vert, color: textColor),
+            onSelected: (value) async {
+              if (value == 'export_pdf') {
+                await _exportToPDF(context, ref);
+              } else if (value == 'share') {
+                await _shareStory(context, ref);
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'export_pdf',
+                child: Row(
+                  children: [
+                    Icon(Icons.picture_as_pdf),
+                    SizedBox(width: 12),
+                    Text('Export to PDF'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'share',
+                child: Row(
+                  children: [
+                    Icon(Icons.share),
+                    SizedBox(width: 12),
+                    Text('Share Story'),
+                  ],
+                ),
+              ),
+            ],
+          ),
           // Story metadata badge
           Padding(
-            padding: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.only(right: 8),
             child: Center(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -352,6 +389,148 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen> {
                   color: color,
                   fontWeight: FontWeight.w600,
                 ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Export story to PDF
+  Future<void> _exportToPDF(BuildContext context, WidgetRef ref) async {
+    // Check if user has Premium+ subscription
+    final user = await ref.read(currentUserProvider.future);
+    if (user == null) return;
+
+    final userTier = user.subscriptionTier ?? AppConstants.tierFree;
+
+    if (!AppConstants.isFeatureAvailable(userTier, 'pdf_export')) {
+      if (context.mounted) {
+        _showUpgradeDialog(context);
+      }
+      return;
+    }
+
+    // Show loading
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Generating PDF...'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+
+    // Export to PDF
+    final pdfController = ref.read(pdfExportNotifierProvider.notifier);
+    final result = await pdfController.exportStory(widget.story);
+
+    if (context.mounted) {
+      result.fold(
+        (failure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(failure.message),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        },
+        (filePath) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('PDF saved to: $filePath'),
+              backgroundColor: AppColors.success,
+              action: SnackBarAction(
+                label: 'SHARE',
+                onPressed: () => _shareStory(context, ref),
+              ),
+            ),
+          );
+        },
+      );
+    }
+  }
+
+  /// Share story as PDF
+  Future<void> _shareStory(BuildContext context, WidgetRef ref) async {
+    // Check if user has Premium+ subscription
+    final user = await ref.read(currentUserProvider.future);
+    if (user == null) return;
+
+    final userTier = user.subscriptionTier ?? AppConstants.tierFree;
+
+    if (!AppConstants.isFeatureAvailable(userTier, 'pdf_export')) {
+      if (context.mounted) {
+        _showUpgradeDialog(context);
+      }
+      return;
+    }
+
+    // Show loading
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Preparing to share...'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+    }
+
+    // Export and share
+    final pdfController = ref.read(pdfExportNotifierProvider.notifier);
+    final result = await pdfController.exportAndShare(widget.story);
+
+    if (context.mounted) {
+      result.fold(
+        (failure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(failure.message),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        },
+        (_) {
+          // Share dialog was shown, success
+        },
+      );
+    }
+  }
+
+  /// Show upgrade dialog for premium features
+  void _showUpgradeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.workspace_premium, color: AppColors.accent),
+            const SizedBox(width: 12),
+            const Text('Premium+ Feature'),
+          ],
+        ),
+        content: const Text(
+          'PDF Export is available with Premium+ subscription.\n\n'
+          'Upgrade to Premium+ to:\n'
+          '• Export stories to PDF\n'
+          '• Share stories with friends\n'
+          '• Add photos to stories\n'
+          '• Unlimited AI stories\n'
+          'And more!',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Not Now'),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(context);
+              context.push(AppRoutes.subscription);
+            },
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.accent,
+            ),
+            child: const Text('Upgrade'),
           ),
         ],
       ),
