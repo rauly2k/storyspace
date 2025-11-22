@@ -421,7 +421,7 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen> {
     }
 
     // Export to PDF
-    final pdfController = ref.read(pdfExportNotifierProvider.notifier);
+    final pdfController = ref.read(pdfExportProvider.notifier);
     final result = await pdfController.exportStory(widget.story);
 
     if (context.mounted) {
@@ -476,7 +476,7 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen> {
     }
 
     // Export and share
-    final pdfController = ref.read(pdfExportNotifierProvider.notifier);
+    final pdfController = ref.read(pdfExportProvider.notifier);
     final result = await pdfController.exportAndShare(widget.story);
 
     if (context.mounted) {

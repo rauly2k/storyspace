@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/error/failures.dart';
@@ -146,7 +146,7 @@ class PdfExportRepositoryImpl {
                 ],
               ),
             );
-          ),
+          },
         ),
       );
 
@@ -158,7 +158,7 @@ class PdfExportRepositoryImpl {
 
       return Right(file.path);
     } catch (e) {
-      return Left(Failure(message: 'Eroare la generarea PDF: ${e.toString()}'));
+      return Left(Failure.unknown(message: 'Eroare la generarea PDF: ${e.toString()}'));
     }
   }
 
@@ -178,12 +178,12 @@ class PdfExportRepositoryImpl {
             );
             return const Right(null);
           } catch (e) {
-            return Left(Failure(message: 'Eroare la partajarea PDF: ${e.toString()}'));
+            return Left(Failure.unknown(message: 'Eroare la partajarea PDF: ${e.toString()}'));
           }
         },
       );
     } catch (e) {
-      return Left(Failure(message: 'Eroare: ${e.toString()}'));
+      return Left(Failure.unknown(message: 'Eroare: ${e.toString()}'));
     }
   }
 

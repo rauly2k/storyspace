@@ -184,7 +184,7 @@ class SubscriptionScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isPopular ? color : AppColors.outline,
+          color: isPopular ? color : AppColors.textLight,
           width: isPopular ? 2 : 1,
         ),
       ),
@@ -331,113 +331,6 @@ class SubscriptionScreen extends ConsumerWidget {
       SnackBar(
         content: Text('Subscription to $tier plan will be available soon!'),
         backgroundColor: AppColors.primary,
-      ),
-    final textTheme = Theme.of(context).textTheme;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppStringsRo.subscription),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: [
-          // Header
-          Text(
-            'Alege Planul Perfect Pentru Tine',
-            style: textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppColors.primary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8.0),
-          Text(
-            'Descoperă magia poveștilor personalizate!',
-            style: textTheme.bodyLarge?.copyWith(
-              color: AppColors.textSecondary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 32.0),
-
-          // Free Tier
-          _SubscriptionCard(
-            tier: AppConstants.tierFree,
-            title: AppStringsRo.free,
-            price: '0 LEI',
-            priceSubtitle: 'Gratis pentru totdeauna',
-            features: const [
-              '1 profil copil',
-              '2 povești AI/lună',
-              '5 povești pre-făcute',
-              'Citire offline: Nu',
-              'Audio narațiune: Nu',
-            ],
-            color: Colors.grey,
-            isCurrentPlan: true,
-            onTap: null,
-          ),
-
-          const SizedBox(height: 16.0),
-
-          // Premium Tier
-          _SubscriptionCard(
-            tier: AppConstants.tierPremium,
-            title: AppStringsRo.premium,
-            price: '${AppConstants.premiumPrice} LEI',
-            priceSubtitle: 'pe lună',
-            features: const [
-              '3 profile copii',
-              '20 povești AI/lună',
-              'Povești nelimitate pre-făcute',
-              '10 descărcări offline',
-              'Audio narațiune activată',
-              'Toate stilurile artistice',
-            ],
-            color: AppColors.secondary,
-            isPopular: true,
-            isCurrentPlan: false,
-            onTap: () => _showComingSoonDialog(context),
-          ),
-
-          const SizedBox(height: 16.0),
-
-          // Premium+ Tier
-          _SubscriptionCard(
-            tier: AppConstants.tierPremiumPlus,
-            title: AppStringsRo.premiumPlus,
-            price: '${AppConstants.premiumPlusPrice} LEI',
-            priceSubtitle: 'pe lună',
-            features: const [
-              'Profile copii NELIMITATE',
-              'Povești AI NELIMITATE',
-              'Povești pre-făcute NELIMITATE',
-              'Descărcări offline NELIMITATE',
-              'Audio narațiune premium',
-              'Fotografia copilului în poveste',
-              'Export PDF',
-              'Suport prioritar',
-            ],
-            color: AppColors.accent,
-            isPremiumPlus: true,
-            isCurrentPlan: false,
-            onTap: () => _showComingSoonDialog(context),
-          ),
-
-          const SizedBox(height: 32.0),
-
-          // Features comparison
-          _buildFeaturesComparison(textTheme),
-
-          const SizedBox(height: 32.0),
-
-          // FAQ Section
-          _buildFAQ(textTheme),
-
-          const SizedBox(height: 16.0),
-        ],
       ),
     );
   }

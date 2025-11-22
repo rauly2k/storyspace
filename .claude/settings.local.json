@@ -4,7 +4,10 @@
       "mcp__ide__getDiagnostics",
       "Bash(flutter doctor:*)",
       "Bash(flutter pub run build_runner build:*)",
-      "Bash(flutter pub get:*)"
+      "Bash(flutter pub get:*)",
+      "Bash(cat:*)",
+      "Bash(python:*)",
+      "Bash(flutter analyze:*)"
     ],
     "deny": [],
     "ask": []

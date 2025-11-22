@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/services/preferences_service.dart';
-import '../widgets/onboarding_wave_clipper.dart';
+import '../widgets/space_parallax_background.dart';
+import '../widgets/glassmorphic_content_card.dart';
+import '../widgets/rocket_progress_indicator.dart';
+import '../widgets/pulsing_gradient_button.dart';
+import '../widgets/animated_onboarding_text.dart';
+import '../widgets/spaceship_hud_button.dart';
 
-/// Onboarding screen with 3 slides introducing the app
+/// Immersive space-themed onboarding screen with parallax effects
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -17,18 +23,32 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  double _pageOffset = 0.0;
 
-  // Image assets for each slide
+  // Image assets for each slide (bear astronaut character)
   final List<String> _imageAssets = [
-    'assets/images/onboarding_slide1_image.png',
-    'assets/images/onboarding_slide2_image.png',
-    'assets/images/onboarding_slide3_image.png',
+    'assets/images/onb1.png',
+    'assets/images/onb2.png',
+    'assets/images/onb3.png',
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _pageController.addListener(_onPageScroll);
+  }
+
+  @override
   void dispose() {
+    _pageController.removeListener(_onPageScroll);
     _pageController.dispose();
     super.dispose();
+  }
+
+  void _onPageScroll() {
+    setState(() {
+      _pageOffset = _pageController.page ?? 0.0;
+    });
   }
 
   void _onPageChanged(int page) {
@@ -64,175 +84,126 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Stack(
         children: [
-          // Top Section: Image with Custom Wave Shape
-          Expanded(
-            child: PageView.builder(
-              controller: _pageController,
-              onPageChanged: _onPageChanged,
-              itemCount: AppConstants.onboardingSlideCount,
-              itemBuilder: (context, index) {
-                return Stack(
-                  children: [
-                    // Image with wave clipper
-                    ClipPath(
-                      clipper: OnboardingWaveClipper(),
-                      child: Image.asset(
-                        _imageAssets[index],
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                        // Fallback for missing images
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            width: double.infinity,
-                            height: double.infinity,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  AppColors.primary.withOpacity(0.3),
-                                  AppColors.secondary.withOpacity(0.3),
-                                ],
-                              ),
-                            ),
-                            child: Center(
-                              child: Icon(
-                                _getSlideIcon(index),
-                                size: 120,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-
-                    // Skip Button (positioned at top-right)
-                    if (_currentPage < AppConstants.onboardingSlideCount - 1)
-                      Positioned(
-                        top: 40.0,
-                        right: 24.0,
-                        child: TextButton(
-                          onPressed: _skipOnboarding,
-                          child: Text(
-                            'Skip',
-                            style: textTheme.bodyLarge?.copyWith(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                );
-              },
-            ),
+          // Full-screen background images
+          PageView.builder(
+            controller: _pageController,
+            onPageChanged: _onPageChanged,
+            itemCount: AppConstants.onboardingSlideCount,
+            itemBuilder: (context, index) {
+              return Image.asset(
+                _imageAssets[index],
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+                errorBuilder: (context, error, stackTrace) {
+                  // Fallback to parallax background if image fails to load
+                  return SpaceParallaxBackground(
+                    pageOffset: _pageOffset,
+                    currentPage: _currentPage,
+                  );
+                },
+              );
+            },
           ),
 
-          // Bottom Content Section: Text, Indicator, Button
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  children: [
-                    // Onboarding Title
-                    Text(
-                      AppConstants.onboardingSlides[_currentPage]['title']!,
-                      style: textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+          // Main content overlaid on top
+          SafeArea(
+            child: Column(
+              children: [
+                // Skip button at top right (HUD style)
+                if (_currentPage < AppConstants.onboardingSlideCount - 1)
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 16.0, right: 24.0),
+                      child: SpaceshipHudButton(
+                        text: 'SKIP',
+                        onPressed: _skipOnboarding,
                       ),
-                      textAlign: TextAlign.center,
                     ),
+                  ),
 
-                    const SizedBox(height: 16.0),
+                const Spacer(),
 
-                    // Onboarding Description
-                    Text(
-                      AppConstants.onboardingSlides[_currentPage]['description']!,
-                      style: textTheme.bodyLarge?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-
-                    const SizedBox(height: 32.0),
-
-                    // Page Indicator (Dots)
-                    _buildPageIndicator(),
-
-                    const SizedBox(height: 32.0),
-
-                    // Continue Button
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _nextPage,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.secondary,
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                        ),
-                        child: Text(
-                          _currentPage == AppConstants.onboardingSlideCount - 1
-                              ? 'Get Started'
-                              : 'Continue',
-                          style: textTheme.titleMedium?.copyWith(
+                // Glassmorphic content card at bottom
+                Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: GlasmorphicContentCard(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Animated title with text shadow
+                        AnimatedOnboardingText(
+                          text: AppConstants.onboardingSlides[_currentPage]['title']!,
+                          style: GoogleFonts.quicksand(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w700,
                             color: Colors.white,
-                            fontWeight: FontWeight.w600,
+                            shadows: [
+                              const Shadow(
+                                color: Colors.black45,
+                                offset: Offset(0, 2),
+                                blurRadius: 4,
+                              ),
+                            ],
                           ),
+                          textAlign: TextAlign.center,
                         ),
-                      ),
+
+                        const SizedBox(height: 16.0),
+
+                        // Animated description with cream color
+                        AnimatedOnboardingText(
+                          text: AppConstants.onboardingSlides[_currentPage]['description']!,
+                          style: GoogleFonts.nunito(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xFFFFF8F0), // Cream color
+                            height: 1.5,
+                            shadows: [
+                              const Shadow(
+                                color: Colors.black26,
+                                offset: Offset(0, 1),
+                                blurRadius: 2,
+                              ),
+                            ],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+
+                        const SizedBox(height: 32.0),
+
+                        // Rocket ship progress indicator
+                        RocketProgressIndicator(
+                          currentPage: _currentPage,
+                          totalPages: AppConstants.onboardingSlideCount,
+                        ),
+
+                        const SizedBox(height: 32.0),
+
+                        // Pulsing gradient button
+                        PulsingGradientButton(
+                          text: _currentPage == AppConstants.onboardingSlideCount - 1
+                              ? 'Launch Into StorySpace'
+                              : 'Continue',
+                          onPressed: _nextPage,
+                          gradientColors: const [
+                            AppColors.secondary, // Turquoise
+                            AppColors.primary, // Pink
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
     );
-  }
-
-  /// Builds the page indicator (dots)
-  Widget _buildPageIndicator() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(
-        AppConstants.onboardingSlideCount,
-        (index) => Container(
-          margin: const EdgeInsets.symmetric(horizontal: 4.0),
-          width: _currentPage == index ? 24.0 : 8.0,
-          height: 8.0,
-          decoration: BoxDecoration(
-            color: _currentPage == index
-                ? AppColors.primary
-                : AppColors.primary.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(4.0),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Returns appropriate icon for each slide (fallback when images are missing)
-  IconData _getSlideIcon(int index) {
-    final icons = [
-      Icons.auto_stories_rounded,
-      Icons.auto_awesome_rounded,
-      Icons.rocket_launch_rounded,
-    ];
-    return icons[index];
   }
 }

@@ -289,7 +289,7 @@ class KidProfilesScreen extends ConsumerWidget {
               Navigator.of(dialogContext).pop();
               final success = await ref
                   .read(kidProfileControllerProvider.notifier)
-                  .deleteKidProfile(profile.id);
+                  .deleteKidProfile(profileId: profile.id);
 
               if (context.mounted && success) {
                 ScaffoldMessenger.of(context).showSnackBar(

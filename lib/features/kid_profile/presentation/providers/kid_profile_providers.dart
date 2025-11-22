@@ -36,7 +36,7 @@ KidProfileRepository kidProfileRepository(Ref ref) {
 /// Stream provider for kid profiles list
 @riverpod
 Stream<List<KidProfileEntity>> kidProfiles(Ref ref) async* {
-  final user = await ref.watch(currentUserProvider.future);
+  final user = await ref.watch(authStateChangesProvider.future);
 
   if (user == null) {
     yield [];
@@ -63,7 +63,7 @@ Future<KidProfileEntity?> kidProfile(Ref ref, String profileId) async {
 /// Returns the first profile from the list for now
 @riverpod
 Stream<KidProfileEntity?> currentKidProfile(Ref ref) async* {
-  final user = await ref.watch(currentUserProvider.future);
+  final user = await ref.watch(authStateChangesProvider.future);
 
   if (user == null) {
     yield null;
@@ -120,7 +120,7 @@ class KidProfileController extends _$KidProfileController {
   }) async {
     state = state.copyWith(isLoading: true, error: null, successMessage: null);
 
-    final user = await ref.read(currentUserProvider.future);
+    final user = await ref.read(authStateChangesProvider.future);
     if (user == null) {
       state = state.copyWith(
         isLoading: false,
